@@ -1,0 +1,1 @@
+export { ITabItem } from './tab'
