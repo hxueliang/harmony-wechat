@@ -7,6 +7,11 @@ import { WechatStore } from '../../utils'
 export struct Connect {
   @State
   connectList: ConnectItem[] = []
+  @State
+  filterList: ConnectItem[] = []
+  @State
+  @Watch('getFilterList')
+  filerValue: string = ''
 
   aboutToAppear(): void {
     this.getConnectList()
@@ -18,10 +23,14 @@ export struct Connect {
     WechatStore.setConnectList(this.connectList, getContext())
   }
 
+  getFilterList() {
+    this.filterList = this.connectList.filter(item => item.userName.includes(this.filerValue))
+  }
+
   build() {
     Column({ space: 5 }) {
       Row() {
-        Search({ placeholder: '搜索' })
+        Search({ placeholder: '搜索', value: $$this.filerValue })
           .width('100%')
           .height(30)
           .borderRadius(4)
@@ -33,7 +42,7 @@ export struct Connect {
       })
 
       List() {
-        ForEach(this.connectList, (item: ConnectItem, index) => {
+        ForEach(this.filerValue ? this.filterList : this.connectList, (item: ConnectItem, index) => {
           ListItem() {
             Row({ space: 10 }) {
               Image(item.avatar)
