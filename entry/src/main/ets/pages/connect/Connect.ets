@@ -1,6 +1,7 @@
 import { connectList, getConnectList } from '../../apis'
 import { ConnectItem } from '../../models'
 import { WechatStore } from '../../utils'
+import { router } from '@kit.ArkUI'
 
 @Preview
 @Component
@@ -70,6 +71,11 @@ export struct Connect {
             normal: {
               .backgroundColor(Color.Transparent)
             },
+          })
+          .onClick(() => {
+            router.pushUrl({
+              url: 'pages/ChatDetail/ChatDetail'
+            })
           })
         })
       }
