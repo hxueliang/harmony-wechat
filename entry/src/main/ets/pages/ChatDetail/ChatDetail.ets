@@ -1,8 +1,13 @@
 import { router, window } from '@kit.ArkUI'
+import { CURRENT_USER_KEY } from '../../constants'
+import { UserInfo, UserInfoModel } from '../../models'
 
 @Entry
 @Component
 struct ChatDetail {
+  @StorageProp(CURRENT_USER_KEY)
+  currentUser: UserInfoModel = new UserInfoModel({} as UserInfo) // 我
+
   aboutToAppear(): void {
     this.setWindowBackgroundColor()
   }
@@ -37,6 +42,8 @@ struct ChatDetail {
         width: { bottom: 1 },
         color: $r('app.color.border_color')
       })
+
+      Text(JSON.stringify(this.currentUser))
     }
     .width('100%')
     .height('100%')

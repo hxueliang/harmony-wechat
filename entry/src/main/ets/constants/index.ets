@@ -3,3 +3,6 @@ export const WECHAT_STORE_KEY = 'wechat'
 
 /** 联系人列表 */
 export const CONNECT_LIST_KEY = 'connectList'
+
+/** 当前用户 */
+export const CURRENT_USER_KEY = 'currentUser'
