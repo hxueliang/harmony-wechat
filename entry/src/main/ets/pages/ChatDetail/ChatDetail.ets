@@ -1,6 +1,7 @@
 import { router, window } from '@kit.ArkUI'
 import { CURRENT_USER_KEY } from '../../constants'
 import { UserInfo, UserInfoModel } from '../../models'
+import { BottomInput } from './components'
 
 @Entry
 @Component
@@ -49,9 +50,12 @@ struct ChatDetail {
         width: { bottom: 1 },
         color: $r('app.color.border_color')
       })
+
+      BottomInput()
     }
     .width('100%')
     .height('100%')
     .backgroundColor($r('app.color.back_color'))
+    .justifyContent(FlexAlign.SpaceBetween)
   }
 }

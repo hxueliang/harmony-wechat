@@ -26,7 +26,7 @@ struct Index {
     actionIcon: $r('app.media.ic_public_my_filled')
   }]
   @State
-  actionIndex: number = 0
+  actionIndex: number = 1
 
   @Builder
   getTabUI(item: ITabItem, index: number) {
