@@ -7,9 +7,16 @@ import { UserInfo, UserInfoModel } from '../../models'
 struct ChatDetail {
   @StorageProp(CURRENT_USER_KEY)
   currentUser: UserInfoModel = new UserInfoModel({} as UserInfo) // 我
+  @Provide
+  talkUser: UserInfoModel = new UserInfoModel({} as UserInfo) // 对方
 
   aboutToAppear(): void {
     this.setWindowBackgroundColor()
+    this.getTalkUser()
+  }
+
+  getTalkUser() {
+    this.talkUser = router.getParams() as UserInfoModel
   }
 
   async setWindowBackgroundColor() {
@@ -27,7 +34,7 @@ struct ChatDetail {
           .onClick(() => {
             router.back()
           })
-        Text('小趴趴')
+        Text(this.talkUser.userName)
           .width('100%')
           .fontColor($r('app.color.text_primary'))
           .textAlign(TextAlign.Center)
@@ -42,8 +49,6 @@ struct ChatDetail {
         width: { bottom: 1 },
         color: $r('app.color.border_color')
       })
-
-      Text(JSON.stringify(this.currentUser))
     }
     .width('100%')
     .height('100%')
