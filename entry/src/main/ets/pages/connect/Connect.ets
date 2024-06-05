@@ -19,9 +19,9 @@ export struct Connect {
   }
 
   async getConnectList() {
-    this.connectList = await WechatStore.getConnectList(getContext())
+    this.connectList = await WechatStore.getConnectList()
     this.connectList = await getConnectList()
-    WechatStore.setConnectList(this.connectList, getContext())
+    WechatStore.setConnectList(this.connectList)
   }
 
   getFilterList() {
