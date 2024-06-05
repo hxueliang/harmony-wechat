@@ -1,4 +1,5 @@
 import { ITabItem } from '../models'
+import { Connect } from './connect/Connect'
 
 @Entry
 @Component
@@ -43,7 +44,9 @@ struct Index {
     Tabs({ index: $$this.actionIndex }) {
       ForEach(this.tabList, (item: ITabItem, index: number) => {
         TabContent() {
-          Text(item.title)
+          if (item.name === 'connect') {
+            Connect()
+          }
         }.tabBar(this.getTabUI(item, index))
       })
     }
