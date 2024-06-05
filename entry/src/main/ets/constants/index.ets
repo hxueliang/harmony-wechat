@@ -1,5 +1,5 @@
-/** 微信仓库key */
-export const Wechat_Store_Key = 'wechat'
+/** 微信仓库 */
+export const WECHAT_STORE_KEY = 'wechat'
 
-/** 联系人列表key */
-export const Connect_List = 'connectList'
+/** 联系人列表 */
+export const CONNECT_LIST_KEY = 'connectList'

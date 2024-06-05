@@ -1,5 +1,5 @@
 import { connectList, getConnectList } from '../../apis'
-import { ConnectItem } from '../../models'
+import { UserInfo } from '../../models'
 import { WechatStore } from '../../utils'
 import { router } from '@kit.ArkUI'
 
@@ -7,9 +7,9 @@ import { router } from '@kit.ArkUI'
 @Component
 export struct Connect {
   @State
-  connectList: ConnectItem[] = []
+  connectList: UserInfo[] = []
   @State
-  filterList: ConnectItem[] = []
+  filterList: UserInfo[] = []
   @State
   @Watch('getFilterList')
   filerValue: string = ''
@@ -43,7 +43,7 @@ export struct Connect {
       })
 
       List() {
-        ForEach(this.filerValue ? this.filterList : this.connectList, (item: ConnectItem, index) => {
+        ForEach(this.filerValue ? this.filterList : this.connectList, (item: UserInfo, index) => {
           ListItem() {
             Row({ space: 10 }) {
               Image(item.avatar)
