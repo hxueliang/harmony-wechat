@@ -1,6 +1,6 @@
 import { AbilityConstant, UIAbility, Want } from '@kit.AbilityKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
-import { window } from '@kit.ArkUI';
+import { KeyboardAvoidMode, window } from '@kit.ArkUI';
 import { WechatStore } from '../utils';
 import { CURRENT_USER_KEY } from '../constants';
 
@@ -17,6 +17,8 @@ export default class EntryAbility extends UIAbility {
     // Main window is created, set main page for this ability
     hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onWindowStageCreate');
 
+    const win = windowStage.getMainWindowSync()
+
     WechatStore.context = this.context
     const user = await WechatStore.getCurrentUser()
     AppStorage.setOrCreate(CURRENT_USER_KEY, user)
@@ -26,6 +28,10 @@ export default class EntryAbility extends UIAbility {
         hilog.error(0x0000, 'testTag', 'Failed to load the content. Cause: %{public}s', JSON.stringify(err) ?? '');
         return;
       }
+
+      // 键盘避让模式
+      win.getUIContext().setKeyboardAvoidMode(KeyboardAvoidMode.RESIZE)
+
       hilog.info(0x0000, 'testTag', 'Succeeded in loading the content.');
     });
   }
