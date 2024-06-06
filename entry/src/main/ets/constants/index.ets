@@ -6,3 +6,6 @@ export const CONNECT_LIST_KEY = 'connectList'
 
 /** 当前用户 */
 export const CURRENT_USER_KEY = 'currentUser'
+
+/** 全量导出消息模块 */
+export * from './message'
