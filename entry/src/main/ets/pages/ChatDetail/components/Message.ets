@@ -6,6 +6,7 @@ import { MessageType, MessageTypeModel, UserInfo, UserInfoModel } from '../../..
 struct Message {
   @StorageProp(CURRENT_USER_KEY)
   currentUser: UserInfo = new UserInfoModel({} as UserInfo)
+  @Require
   @Prop
   currentMessage: MessageType = new MessageTypeModel({} as MessageType)
   @State
@@ -13,22 +14,21 @@ struct Message {
 
   build() {
     Row({ space: 10 }) {
-      Image('https://img1.baidu.com/it/u=3995643348,1848098846&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=800')
+      Image(this.currentMessage.sendUser?.avatar)
         .width(40)
         .aspectRatio(1)
         .borderRadius(4)
 
       Row() {
-        Text('可贺呆顺可顺可贺,呆顺可贺呆顺可贺呆,顺可贺呆贺呆顺可贺呆。')
+        Text(this.currentMessage.messageContent)
           .padding({ left: 12, right: 12, top: 8, bottom: 8 })
           .fontSize(14)
           .lineHeight(20)
           .borderRadius(4)
           .fontColor($r('app.color.text_primary'))
-
           .backgroundColor(this.isOwnMessage ? $r('app.color.second_primary') : $r('app.color.white'))
       }
-      .justifyContent(this.isOwnMessage ? FlexAlign.Start : FlexAlign.Start)
+      .justifyContent(this.isOwnMessage ? FlexAlign.End : FlexAlign.Start)
       .layoutWeight(1)
 
       Text().width(40)

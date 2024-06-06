@@ -1,6 +1,6 @@
 import { router, window } from '@kit.ArkUI'
 import { CURRENT_USER_KEY } from '../../constants'
-import { UserInfo, UserInfoModel } from '../../models'
+import { MessageType, MessageTypeModel, UserInfo, UserInfoModel } from '../../models'
 import { BottomInput, Message } from './components'
 
 @Entry
@@ -10,7 +10,10 @@ struct ChatDetail {
   currentUser: UserInfoModel = new UserInfoModel({} as UserInfo) // 我
   @Provide
   talkUser: UserInfoModel = new UserInfoModel({} as UserInfo) // 对方
-  messageList: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  @State
+  messageList: MessageTypeModel[] = []
+  @State
+  message: string = ''
 
   aboutToAppear(): void {
     this.setWindowBackgroundColor()
@@ -19,6 +22,15 @@ struct ChatDetail {
 
   getTalkUser() {
     this.talkUser = router.getParams() as UserInfoModel
+  }
+
+  sendTextMessage(content: string) {
+    this.message = content
+    this.messageList.push(new MessageTypeModel({
+      sendUser: this.currentUser,
+      connectUser: this.talkUser,
+      messageContent: content,
+    } as MessageType))
   }
 
   async setWindowBackgroundColor() {
@@ -53,9 +65,11 @@ struct ChatDetail {
       })
 
       List({ space: 20 }) {
-        ForEach(this.messageList, (item: number, index: number) => {
+        ForEach(this.messageList, (item: MessageTypeModel, index: number) => {
           ListItem() {
-            Message()
+            Message({
+              currentMessage: item,
+            })
           }
           .padding({
             top: index === 0 ? 10 : 0,
@@ -65,7 +79,11 @@ struct ChatDetail {
       }
       .layoutWeight(1)
 
-      BottomInput()
+      BottomInput({
+        sendTextMessage: (content: string) => {
+          this.sendTextMessage(content)
+        }
+      })
     }
     .width('100%')
     .height('100%')
