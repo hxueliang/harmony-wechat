@@ -1,6 +1,5 @@
 import preferences from '@ohos.data.preferences'
 
-import { connectList } from '../apis'
 import { currentUser } from '../apis/connect'
 import { CONNECT_LIST_KEY, CURRENT_USER_KEY, TALK_USER_RECORD_KEY, WECHAT_STORE_KEY } from '../constants'
 import { MessageTypeModel, UserInfo } from '../models'
@@ -15,11 +14,12 @@ export class WechatStore {
   static async setConnectList(list: UserInfo[]) {
     const store = await WechatStore.getStore()
     store.putSync(CONNECT_LIST_KEY, JSON.stringify(list))
+    await store.flush()
   }
 
   static async getConnectList() {
     const store = await WechatStore.getStore()
-    const listStr = store.getSync(CONNECT_LIST_KEY, JSON.stringify(connectList)) as string
+    const listStr = store.getSync(CONNECT_LIST_KEY, '[]') as string
     const list = JSON.parse(listStr) as UserInfo[]
     return list
   }
@@ -59,7 +59,7 @@ export class WechatStore {
   static async delOneMessageByUser(talkId: number, messageId: number | string) {
     const store = await WechatStore.getStore()
     const messageList = await WechatStore.getAllMessageByUser(talkId)
-    const index = messageList.findIndex(item=> item.id == messageId)
+    const index = messageList.findIndex(item => item.id == messageId)
     messageList.splice(index, 1)
     await store.flush()
   }
