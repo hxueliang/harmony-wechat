@@ -1,4 +1,6 @@
 import { router, window } from '@kit.ArkUI'
+
+import { getApiMessage } from '../../apis'
 import { CURRENT_USER_KEY } from '../../constants'
 import { MessageType, MessageTypeModel, UserInfo, UserInfoModel } from '../../models'
 import { BottomInput, Message } from './components'
@@ -14,6 +16,8 @@ struct ChatDetail {
   messageList: MessageTypeModel[] = []
   @State
   message: string = ''
+  @State
+  talkUserInputIng: boolean = false
 
   aboutToAppear(): void {
     this.setWindowBackgroundColor()
@@ -31,6 +35,26 @@ struct ChatDetail {
       connectUser: this.talkUser,
       messageContent: content,
     } as MessageType))
+
+    setTimeout(() => {
+      this.requestMessage(content)
+    }, 1000)
+  }
+
+  async requestMessage(content: string) {
+    this.talkUserInputIng = true
+    try {
+      const res = await getApiMessage(content)
+      this.messageList.push(new MessageTypeModel({
+        sendUser: this.talkUser,
+        connectUser: this.talkUser,
+        messageContent: res?.data?.info?.text
+      } as MessageType))
+    } catch (err) {
+      console.log(JSON.parse(err))
+    } finally {
+      this.talkUserInputIng = false
+    }
   }
 
   async setWindowBackgroundColor() {
@@ -48,7 +72,7 @@ struct ChatDetail {
           .onClick(() => {
             router.back()
           })
-        Text(this.talkUser.userName)
+        Text(this.talkUserInputIng ? '对方正在输入...' : this.talkUser.userName)
           .width('100%')
           .fontColor($r('app.color.text_primary'))
           .textAlign(TextAlign.Center)
