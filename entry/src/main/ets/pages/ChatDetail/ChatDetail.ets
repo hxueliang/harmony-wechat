@@ -3,6 +3,7 @@ import { router, window } from '@kit.ArkUI'
 import { getApiMessage } from '../../apis'
 import { CURRENT_USER_KEY } from '../../constants'
 import { MessageType, MessageTypeModel, UserInfo, UserInfoModel } from '../../models'
+import { WechatStore } from '../../utils'
 import { BottomInput, Message } from './components'
 
 @Entry
@@ -25,6 +26,12 @@ struct ChatDetail {
 
   getTalkUser() {
     this.talkUser = router.getParams() as UserInfoModel
+    this.getAllMessageByUser()
+  }
+
+  async getAllMessageByUser() {
+    this.messageList = await WechatStore.getAllMessageByUser(this.talkUser.userId)
+    this.scrollBottom()
   }
 
   sendTextMessage(content: string) {
@@ -34,6 +41,7 @@ struct ChatDetail {
       messageContent: content,
     } as MessageType)
     this.messageList.push(message)
+    WechatStore.addOneMessageByUser(this.talkUser.userId, message)
     this.scrollBottom()
 
     setTimeout(() => {
@@ -51,6 +59,7 @@ struct ChatDetail {
         messageContent: res?.data?.info?.text
       } as MessageType)
       this.messageList.push(message)
+      WechatStore.addOneMessageByUser(this.talkUser.userId, message)
       this.scrollBottom()
     } catch (err) {
       console.log(JSON.parse(err))
