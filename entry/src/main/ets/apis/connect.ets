@@ -1,4 +1,5 @@
 import { UserInfoModel } from '../models/connect'
+import { getRandomCapitalLetter, getRandomLowerLetter } from '../utils'
 
 export const connectList = [
   new UserInfoModel({
@@ -55,7 +56,9 @@ export const connectList = [
 
 export const getConnectList = async () => {
   return new Promise<UserInfoModel[]>((resolve) => {
-    connectList[0].userName += 'abc'
+    connectList[0].userName += getRandomLowerLetter()
+    connectList[3].userName += getRandomCapitalLetter()
+
     setTimeout(() => {
       resolve(connectList)
     }, 2 * 1000)
