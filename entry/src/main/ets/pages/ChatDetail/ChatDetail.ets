@@ -18,6 +18,7 @@ struct ChatDetail {
   message: string = ''
   @State
   talkUserInputIng: boolean = false
+  scroller: Scroller = new Scroller()
 
   aboutToAppear(): void {
     this.setWindowBackgroundColor()
@@ -35,6 +36,7 @@ struct ChatDetail {
       connectUser: this.talkUser,
       messageContent: content,
     } as MessageType))
+    this.scrollBottom()
 
     setTimeout(() => {
       this.requestMessage(content)
@@ -50,11 +52,16 @@ struct ChatDetail {
         connectUser: this.talkUser,
         messageContent: res?.data?.info?.text
       } as MessageType))
+      this.scrollBottom()
     } catch (err) {
       console.log(JSON.parse(err))
     } finally {
       this.talkUserInputIng = false
     }
+  }
+
+  scrollBottom() {
+    this.scroller.scrollEdge(Edge.Bottom)
   }
 
   async setWindowBackgroundColor() {
@@ -88,7 +95,7 @@ struct ChatDetail {
         color: $r('app.color.border_color')
       })
 
-      List({ space: 20 }) {
+      List({ space: 20, scroller: this.scroller }) {
         ForEach(this.messageList, (item: MessageTypeModel, index: number) => {
           ListItem() {
             Message({
