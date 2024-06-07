@@ -15,8 +15,6 @@ struct ChatDetail {
   @State
   messageList: MessageTypeModel[] = []
   @State
-  message: string = ''
-  @State
   talkUserInputIng: boolean = false
   scroller: Scroller = new Scroller()
 
@@ -30,12 +28,12 @@ struct ChatDetail {
   }
 
   sendTextMessage(content: string) {
-    this.message = content
-    this.messageList.push(new MessageTypeModel({
+    const message = new MessageTypeModel({
       sendUser: this.currentUser,
       connectUser: this.talkUser,
       messageContent: content,
-    } as MessageType))
+    } as MessageType)
+    this.messageList.push(message)
     this.scrollBottom()
 
     setTimeout(() => {
@@ -47,11 +45,12 @@ struct ChatDetail {
     this.talkUserInputIng = true
     try {
       const res = await getApiMessage(content)
-      this.messageList.push(new MessageTypeModel({
+      const message = new MessageTypeModel({
         sendUser: this.talkUser,
         connectUser: this.talkUser,
         messageContent: res?.data?.info?.text
-      } as MessageType))
+      } as MessageType)
+      this.messageList.push(message)
       this.scrollBottom()
     } catch (err) {
       console.log(JSON.parse(err))
