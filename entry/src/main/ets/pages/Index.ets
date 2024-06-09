@@ -1,4 +1,5 @@
 import { ITabItem } from '../models'
+import { WeChat } from './weChat/WeChat'
 import { Connect } from './connect/Connect'
 
 @Entry
@@ -26,7 +27,7 @@ struct Index {
     actionIcon: $r('app.media.ic_public_my_filled')
   }]
   @State
-  actionIndex: number = 1
+  actionIndex: number = 0
 
   @Builder
   getTabUI(item: ITabItem, index: number) {
@@ -46,6 +47,8 @@ struct Index {
         TabContent() {
           if (item.name === 'connect') {
             Connect()
+          } else if (item.name === 'wechat') {
+            WeChat()
           }
         }.tabBar(this.getTabUI(item, index))
       })

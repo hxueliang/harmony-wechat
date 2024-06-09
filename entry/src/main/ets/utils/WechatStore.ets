@@ -63,4 +63,22 @@ export class WechatStore {
     messageList.splice(index, 1)
     await store.flush()
   }
+
+  /** 获取所有联系人的最后一条聊天记录 */
+  static async getAllMessageRecord() {
+    const store = await WechatStore.getStore()
+    const result = store.getAllSync() as object
+    const list: MessageTypeModel[] = []
+    Object.keys(result).forEach(key => {
+      if (key.includes(`${TALK_USER_RECORD_KEY}`) && result[key]) {
+        const arr = JSON.parse(result[key]) as MessageTypeModel[]
+        if (arr.length) {
+          list.push(arr[arr.length-1])
+        }
+
+      }
+    })
+    list.sort((a, b) => b.sendTime as number - (a.sendTime as number))
+    return list
+  }
 }
