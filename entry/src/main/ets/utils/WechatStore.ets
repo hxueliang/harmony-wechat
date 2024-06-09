@@ -75,10 +75,9 @@ export class WechatStore {
         if (arr.length) {
           list.push(arr[arr.length-1])
         }
-
       }
     })
-    list.sort((a, b) => b.sendTime as number - (a.sendTime as number))
+    list.sort((a, b) => b.sendTime - a.sendTime)
     return list
   }
 }

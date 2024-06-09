@@ -28,9 +28,9 @@ export class MessageTypeModel implements MessageType {
   connectUser: UserInfo = new UserInfoModel({} as UserInfo)
   messageContent: string = ''
   messageType: MessageTypeEnum = MessageTypeEnum.TEXT
-  sourceFilePath?: string = ''
-  sourceDuration?: number = 0
-  sendTime?: number = 0
+  sourceFilePath: string = ''
+  sourceDuration: number = 0
+  sendTime: number = 0
   id: number | string = 0
 
   constructor(model: MessageType) {
