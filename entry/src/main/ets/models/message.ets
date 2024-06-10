@@ -2,6 +2,7 @@ import { util } from '@kit.ArkTS'
 
 import { UserInfo, UserInfoModel } from '.'
 import { MessageTypeEnum } from '../constants'
+import { getTimeObj } from '../utils'
 
 /** 消息类型 */
 export interface MessageType {
@@ -34,13 +35,19 @@ export class MessageTypeModel implements MessageType {
   id: number | string = 0
 
   constructor(model: MessageType) {
+    // 模拟数据
+    let testTime = 0
+    // const time = new Date()
+    // const timeObj = getTimeObj(time)
+    // testTime = new Date('2023/10/1' + ` ${timeObj.hours}:${timeObj.minutes}:${timeObj.second}`).getTime()
+
     this.sendUser = model.sendUser
     this.connectUser = model.connectUser
     this.messageContent = model.messageContent
     this.messageType = model.messageType = MessageTypeEnum.TEXT
     this.sourceFilePath = model.sourceFilePath || ''
     this.sourceDuration = model.sourceDuration || 0
-    this.sendTime = model.sendTime || Date.now()
+    this.sendTime = testTime || model.sendTime || Date.now()
     this.id = model.id || util.generateRandomUUID()
   }
 }
