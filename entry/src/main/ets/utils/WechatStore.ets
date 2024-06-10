@@ -2,7 +2,7 @@ import preferences from '@ohos.data.preferences'
 
 import { currentUser } from '../apis/connect'
 import { CONNECT_LIST_KEY, CURRENT_USER_KEY, TALK_USER_RECORD_KEY, WECHAT_STORE_KEY } from '../constants'
-import { MessageTypeModel, UserInfo } from '../models'
+import { MessageTypeModel, UserInfo, UserInfoModel } from '../models'
 
 export class WechatStore {
   static context: Context
@@ -31,52 +31,52 @@ export class WechatStore {
     return user
   }
 
+  /** 获取聊天记录仓库 */
+  static getMessageRecordStore(talkId: number) {
+    return preferences.getPreferences(getContext(), `${TALK_USER_RECORD_KEY}_${talkId}`)
+  }
+
   /** 获取全部聊天记录(指定对话用户) */
   static async getAllMessageByUser(talkId: number) {
-    const store = await WechatStore.getStore()
-    const messageListStr = store.getSync(`${TALK_USER_RECORD_KEY}_${talkId}`, '[]') as string
-    const messageList = JSON.parse(messageListStr) as MessageTypeModel[]
-    return messageList
+    const store = await WechatStore.getMessageRecordStore(talkId)
+    const allRecord = store.getAllSync() as object
+    if (allRecord) {
+      const list = Object.values(allRecord).map((item: string) => JSON.parse(item) as MessageTypeModel)
+      list.sort((a, b) => a.sendTime - b.sendTime)
+      return list
+    }
+    return []
   }
 
   /** 删除全部聊天记录(指定对话用户) */
-  static async delAllMessageByUser(talkId: UserInfo) {
-    const store = await WechatStore.getStore()
+  static async delAllMessageByUser(talkId: number) {
+    const store = await WechatStore.getMessageRecordStore(talkId)
     store.deleteSync(`${TALK_USER_RECORD_KEY}_${talkId}`)
     await store.flush()
   }
 
   /** 添加一条聊天记录(指定对话用户) */
   static async addOneMessageByUser(talkId: number, message: MessageTypeModel) {
-    const store = await WechatStore.getStore()
-    const messageList = await WechatStore.getAllMessageByUser(talkId)
-    messageList.push(message)
-    store.putSync(`${TALK_USER_RECORD_KEY}_${talkId}`, JSON.stringify(messageList))
+    const store = await WechatStore.getMessageRecordStore(talkId)
+    store.putSync(message.id + '', JSON.stringify(message))
     await store.flush()
   }
 
   /** 删除一条聊天记录(指定对话用户) */
   static async delOneMessageByUser(talkId: number, messageId: number | string) {
-    const store = await WechatStore.getStore()
-    const messageList = await WechatStore.getAllMessageByUser(talkId)
-    const index = messageList.findIndex(item => item.id == messageId)
-    messageList.splice(index, 1)
+    const store = await WechatStore.getMessageRecordStore(talkId)
+    store.deleteSync(messageId + '')
     await store.flush()
   }
 
   /** 获取所有联系人的最后一条聊天记录 */
   static async getAllMessageRecord() {
-    const store = await WechatStore.getStore()
-    const result = store.getAllSync() as object
+    const connectList = await WechatStore.getConnectList()
     const list: MessageTypeModel[] = []
-    Object.keys(result).forEach(key => {
-      if (key.includes(`${TALK_USER_RECORD_KEY}`) && result[key]) {
-        const arr = JSON.parse(result[key]) as MessageTypeModel[]
-        if (arr.length) {
-          list.push(arr[arr.length-1])
-        }
-      }
-    })
+    for (let index = 0; index < connectList.length; index++) {
+      const messageList = await WechatStore.getAllMessageByUser(connectList[index].userId)
+      messageList?.length && list.push(messageList[messageList.length - 1])
+    }
     list.sort((a, b) => b.sendTime - a.sendTime)
     return list
   }
