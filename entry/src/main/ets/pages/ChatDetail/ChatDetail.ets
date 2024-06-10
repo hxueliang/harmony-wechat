@@ -117,6 +117,9 @@ struct ChatDetail {
         })
       }
       .layoutWeight(1)
+      .onAppear(() => {
+        this.scrollBottom()
+      })
 
       BottomInput({
         sendTextMessage: (content: string) => {

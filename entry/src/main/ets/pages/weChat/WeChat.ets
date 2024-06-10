@@ -20,7 +20,6 @@ export struct WeChat {
   transTime(time: number) {
     const timeObj = getTimeObj(time)
     const nowObj = getTimeObj(new Date())
-    console.log('x_log', JSON.stringify(nowObj))
 
     // 不同年
     if (timeObj.year !== nowObj.year) {
