@@ -1,7 +1,9 @@
 import { router } from '@kit.ArkUI'
+import { emitter } from '@kit.BasicServicesKit'
 
 import { MessageTypeModel } from '../../models'
 import { getTimeObj, WechatStore } from '../../utils'
+import { UPDATE_MESSAGE_RECORD_EVENT } from '../../constants'
 
 @Component
 export struct WeChat {
@@ -15,6 +17,14 @@ export struct WeChat {
 
   async getAllMessageRecord() {
     this.list = await WechatStore.getAllMessageRecord()
+    // 方式一，线程内通信
+    // getContext().eventHub.on(UPDATE_MESSAGE_RECORD_EVENT, async () => {
+    //   this.list = await WechatStore.getAllMessageRecord()
+    // })
+    // 方式二，进程内通信
+    emitter.on(UPDATE_MESSAGE_RECORD_EVENT, async () => {
+      this.list = await WechatStore.getAllMessageRecord()
+    })
   }
 
   transTime(time: number) {

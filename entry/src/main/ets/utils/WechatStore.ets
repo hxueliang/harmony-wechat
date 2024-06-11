@@ -1,7 +1,14 @@
 import preferences from '@ohos.data.preferences'
+import { emitter } from '@kit.BasicServicesKit'
 
 import { currentUser } from '../apis/connect'
-import { CONNECT_LIST_KEY, CURRENT_USER_KEY, TALK_USER_RECORD_KEY, WECHAT_STORE_KEY } from '../constants'
+import {
+  CONNECT_LIST_KEY,
+  CURRENT_USER_KEY,
+  TALK_USER_RECORD_KEY,
+  UPDATE_MESSAGE_RECORD_EVENT,
+  WECHAT_STORE_KEY
+} from '../constants'
 import { MessageTypeModel, UserInfo, UserInfoModel } from '../models'
 
 export class WechatStore {
@@ -60,6 +67,11 @@ export class WechatStore {
     const store = await WechatStore.getMessageRecordStore(talkId)
     store.putSync(message.id + '', JSON.stringify(message))
     await store.flush()
+    // 触发更新
+    // 方式一，线程内通信
+    // getContext().eventHub.emit(UPDATE_MESSAGE_RECORD_EVENT)
+    // 方式二，进程内通信
+    emitter.emit(UPDATE_MESSAGE_RECORD_EVENT)
   }
 
   /** 删除一条聊天记录(指定对话用户) */
