@@ -79,6 +79,7 @@ export class WechatStore {
     const store = await WechatStore.getMessageRecordStore(talkId)
     store.deleteSync(messageId + '')
     await store.flush()
+    emitter.emit(UPDATE_MESSAGE_RECORD_EVENT)
   }
 
   /** 获取所有联系人的最后一条聊天记录 */

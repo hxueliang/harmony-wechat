@@ -1,35 +1,6 @@
 import { CURRENT_USER_KEY } from '../../../constants'
 import { LongGesturePopupItem, MessageType, MessageTypeModel, UserInfo, UserInfoModel } from '../../../models'
-
-const longGesturePopupList: LongGesturePopupItem[] = [
-  {
-    title: '听筒播放',
-    icon: $r("app.media.ic_public_ears"),
-  },
-  {
-    title: '收藏',
-    icon: $r("app.media.ic_public_cube"),
-  },
-  {
-    title: '转文字',
-    icon: $r("app.media.ic_public_trans_text"),
-  },
-  {
-    title: '删除',
-    icon: $r("app.media.ic_public_cancel"),
-  },
-  {
-    title: '多选',
-    icon: $r("app.media.ic_public_multi_select"),
-  },
-  {
-    title: '引用',
-    icon: $r("app.media.ic_public_link"),
-  },
-  {
-    title: '提醒',
-    icon: $r("app.media.ic_public_warin")
-  }]
+import { WechatStore } from '../../../utils'
 
 @Preview
 @Component
@@ -44,7 +15,38 @@ struct Message {
   @State
   showLongGesturePopup: boolean = false
   @State
-  longGesturePopupList: LongGesturePopupItem[] = longGesturePopupList
+  longGesturePopupList: LongGesturePopupItem[] = [
+    {
+      title: '听筒播放',
+      icon: $r("app.media.ic_public_ears"),
+    },
+    {
+      title: '收藏',
+      icon: $r("app.media.ic_public_cube"),
+    },
+    {
+      title: '转文字',
+      icon: $r("app.media.ic_public_trans_text"),
+    },
+    {
+      title: '删除',
+      icon: $r("app.media.ic_public_cancel"),
+      onClick: () => this.delOneMessage()
+    },
+    {
+      title: '多选',
+      icon: $r("app.media.ic_public_multi_select"),
+    },
+    {
+      title: '引用',
+      icon: $r("app.media.ic_public_link"),
+    },
+    {
+      title: '提醒',
+      icon: $r("app.media.ic_public_warin")
+    }]
+  delOneMessage: () => void = () => {
+  }
 
   @Builder
   getPopupUI() {
@@ -64,6 +66,9 @@ struct Message {
           .justifyContent(FlexAlign.Center)
           .alignItems(HorizontalAlign.Center)
         }
+        .onClick(() => {
+          item.onClick && item.onClick()
+        })
       })
     }
     .padding({

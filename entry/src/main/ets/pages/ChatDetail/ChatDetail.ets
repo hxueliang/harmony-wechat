@@ -77,6 +77,16 @@ struct ChatDetail {
     win.setWindowBackgroundColor('#ededed')
   }
 
+  delOneMessage(messageId: string) {
+    // 删除首选项数据
+    WechatStore.delOneMessageByUser(this.talkUser.userId, messageId)
+    // 删除内存数据
+    const index = this.messageList.findIndex(item => item.id === messageId)
+    if (index > -1) {
+      this.messageList.splice(index, 1)
+    }
+  }
+
   build() {
     Column() {
       Stack({ alignContent: Alignment.Start }) {
@@ -108,6 +118,9 @@ struct ChatDetail {
           ListItem() {
             Message({
               currentMessage: item,
+              delOneMessage: () => {
+                this.delOneMessage(item.id.toString())
+              }
             })
           }
           .padding({
