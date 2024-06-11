@@ -48,6 +48,30 @@ export struct WeChat {
     return `${timeObj.month}月${timeObj.date}日`
   }
 
+  @Builder
+  delTalkUserAllMessageUI(item: MessageTypeModel) {
+    Row() {
+      Text('删除')
+        .width(100)
+        .height(60)
+        .textAlign(TextAlign.Center)
+        .backgroundColor($r('app.color.danger'))
+        .fontColor($r('app.color.white'))
+        .onClick(() => {
+          // 删除首选项数据
+          WechatStore.delAllMessageByUser(item.connectUser.userId)
+          // 删除内存数据
+          const index = this.list.findIndex(message => message.id === item.id)
+          if (index > -1) {
+            this.list.splice(index, 1)
+          }
+        })
+    }
+    .padding({
+      left: 10
+    })
+  }
+
   build() {
     Column() {
       Row() {
@@ -106,6 +130,11 @@ export struct WeChat {
               url: 'pages/ChatDetail/ChatDetail',
               params: item.connectUser
             })
+          })
+          .swipeAction({
+            end: () => {
+              this.delTalkUserAllMessageUI(item)
+            }
           })
         })
       }

@@ -57,9 +57,7 @@ export class WechatStore {
 
   /** 删除全部聊天记录(指定对话用户) */
   static async delAllMessageByUser(talkId: number) {
-    const store = await WechatStore.getMessageRecordStore(talkId)
-    store.deleteSync(`${TALK_USER_RECORD_KEY}_${talkId}`)
-    await store.flush()
+    preferences.deletePreferences(getContext(), `${TALK_USER_RECORD_KEY}_${talkId}`)
   }
 
   /** 添加一条聊天记录(指定对话用户) */
