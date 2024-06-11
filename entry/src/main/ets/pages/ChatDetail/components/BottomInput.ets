@@ -1,3 +1,5 @@
+import { VoiceInput } from '.'
+
 @Preview
 @Component
 struct BottomInput {
@@ -5,7 +7,16 @@ struct BottomInput {
   isKeyboardMode: boolean = true
   @State
   content: string = ''
+  @State
+  showVoiceInput: boolean = false
   sendTextMessage: (content: string) => void = () => {
+  }
+
+  @Builder
+  getVoiceInputUI() {
+    Column() {
+      VoiceInput()
+    }
   }
 
   showSendBtn() {
@@ -47,6 +58,15 @@ struct BottomInput {
           .height(38)
           .backgroundColor($r('app.color.white'))
           .fontColor($r('app.color.text_primary'))
+          .gesture(
+            LongPressGesture()
+              .onAction(() => {
+                this.showVoiceInput = true
+              })
+              .onActionEnd(() => {
+                this.showVoiceInput = false
+              })
+          )
       }
       if (this.content) {
         Button('发送')
@@ -73,6 +93,9 @@ struct BottomInput {
     .height(50)
     .backgroundColor($r('app.color.second_back_color'))
     .padding({ right: 12, left: 12 })
+    .bindContentCover($$this.showVoiceInput, this.getVoiceInputUI, {
+      modalTransition: ModalTransition.NONE
+    })
   }
 }
 
