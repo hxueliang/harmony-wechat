@@ -1,5 +1,4 @@
 import { VoiceInputState } from '../../../constants'
-import { StartOptions } from '@kit.AbilityKit'
 
 enum RowBtnDirection {
   LEFT = -1,
@@ -28,6 +27,12 @@ function RowBtnStyles(dir: RowBtnDirection, isSelect: boolean) {
   })
 }
 
+@Extend(Row)
+function SoundWaveRowStyles() {
+  .width(70)
+  .height(100)
+}
+
 @Component
 struct VoiceInput {
   @Consume
@@ -36,7 +41,7 @@ struct VoiceInput {
   @State
   isCancel: boolean = false
   @State
-  isVoicing: boolean = true
+  isVoicing: boolean = false // 默认不能为true，因为bindPopup绑定的组件未挂载，需要在onAppear赋值
   @State
   isTransfer: boolean = false
 
@@ -46,8 +51,77 @@ struct VoiceInput {
     this.isTransfer = this.voiceInputState === VoiceInputState.TRANSFER
   }
 
+  @Builder
+  getCancelPopupUI() {
+    Row() {
+    }
+    .width(100)
+    .height(100)
+  }
+
+  @Builder
+  getVoicingPopupUI() {
+    Row() {
+    }
+    .width('60%')
+    .height(100)
+  }
+
+  @Builder
+  getTransferPopupUI() {
+    Row() {
+    }
+    .width('80%')
+    .height(100)
+  }
+
+  @Builder
+  getSoundWaveRowUI() {
+    Row() {
+      Row() {
+      }
+      .SoundWaveRowStyles()
+      .bindPopup(this.isCancel, {
+        builder: this.getCancelPopupUI,
+        popupColor: $r('app.color.danger'),
+        backgroundBlurStyle: BlurStyle.NONE,
+        placement: Placement.Top,
+      })
+
+      Row() {
+      }
+      .SoundWaveRowStyles()
+      .onAppear(() => {
+        this.isVoicing = this.voiceInputState === VoiceInputState.VOICING
+      })
+      .bindPopup(this.isVoicing, {
+        builder: this.getVoicingPopupUI,
+        popupColor: $r('app.color.chat_primary'),
+        backgroundBlurStyle: BlurStyle.NONE,
+        placement: Placement.Top,
+      })
+
+      Row() {
+      }
+      .SoundWaveRowStyles()
+      .bindPopup(this.isTransfer, {
+        builder: this.getTransferPopupUI,
+        popupColor: $r('app.color.chat_primary'),
+        backgroundBlurStyle: BlurStyle.NONE,
+        placement: Placement.Top,
+      })
+    }
+    .justifyContent(FlexAlign.SpaceBetween)
+    .padding({ left: 40, right: 40 })
+    .width('100%')
+  }
+
   build() {
     Column() {
+      // 声音波峰
+      this.getSoundWaveRowUI()
+
+      // 取消和转文本
       Row() {
         Row() {
           Image($r('app.media.ic_public_cancel'))
@@ -76,6 +150,7 @@ struct VoiceInput {
       .justifyContent(FlexAlign.SpaceBetween)
       .padding({ left: 40, right: 40, bottom: 30 })
 
+      // 语音
       Stack() {
         // 底部大图
         Image($r('app.media.ic_public_output'))
