@@ -1,14 +1,22 @@
 import { VoiceInput } from '.'
+import { VoiceInputState } from '../../../constants'
+import { display } from '@kit.ArkUI'
 
 @Preview
 @Component
 struct BottomInput {
+  @Provide
+  voiceInputState: VoiceInputState = VoiceInputState.VOICING
   @State
   isKeyboardMode: boolean = true
   @State
   content: string = ''
   @State
   showVoiceInput: boolean = false
+  @State
+  screenWidth: number = 0
+  @State
+  screenHeight: number = 0
   sendTextMessage: (content: string) => void = () => {
   }
 
@@ -31,6 +39,16 @@ struct BottomInput {
   onSubmit() {
     this.sendTextMessage(this.content)
     this.content = ''
+  }
+
+  async getScreenInfo() {
+    const result = await display.getAllDisplays()
+    this.screenWidth = px2vp(result[0].width)
+    this.screenHeight = px2vp(result[0].height)
+  }
+
+  aboutToAppear(): void {
+    this.getScreenInfo()
   }
 
   build() {
@@ -59,13 +77,32 @@ struct BottomInput {
           .backgroundColor($r('app.color.white'))
           .fontColor($r('app.color.text_primary'))
           .gesture(
-            LongPressGesture()
-              .onAction(() => {
-                this.showVoiceInput = true
-              })
-              .onActionEnd(() => {
-                this.showVoiceInput = false
-              })
+            GestureGroup(
+              GestureMode.Parallel,
+              // voiceInputState
+              LongPressGesture()
+                .onAction(() => {
+                  this.showVoiceInput = true
+                })
+                .onActionEnd(() => {
+                  this.showVoiceInput = false
+                  this.voiceInputState = VoiceInputState.VOICING
+                }),
+              PanGesture()
+                .onActionUpdate((event) => {
+                  const globalX = event.fingerList[0].globalX
+                  const globalY = event.fingerList[0].globalY
+                  if (globalY > this.screenHeight - 140) {
+                    this.voiceInputState = VoiceInputState.VOICING
+                    return
+                  }
+                  if (globalX < this.screenWidth / 2) {
+                    this.voiceInputState = VoiceInputState.CANCEL
+                  } else {
+                    this.voiceInputState = VoiceInputState.TRANSFER
+                  }
+                })
+            )
           )
       }
       if (this.content) {

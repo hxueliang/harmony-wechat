@@ -11,7 +11,10 @@ export const CURRENT_USER_KEY = 'currentUser'
 export const TALK_USER_RECORD_KEY = 'talkUserRecord'
 
 /** 更新聊天记录事件 */
-export  const UPDATE_MESSAGE_RECORD_EVENT = 'updateMessageRecordEvent'
+export const UPDATE_MESSAGE_RECORD_EVENT = 'updateMessageRecordEvent'
 
 /** 全量导出消息模块 */
 export * from './message'
+
+/** 全量导出语音模块 */
+export * from './voice'
