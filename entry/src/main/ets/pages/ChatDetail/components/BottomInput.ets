@@ -2,7 +2,7 @@ import { display, promptAction } from '@kit.ArkUI'
 import { abilityAccessCtrl, bundleManager, common } from '@kit.AbilityKit'
 
 import { VoiceInput } from '.'
-import { CURRENT_USER_KEY, VoiceInputState } from '../../../constants'
+import { CURRENT_USER_KEY, MessageTypeEnum, VoiceInputState } from '../../../constants'
 import { AudioCapturer, FileCommon } from '../../../utils'
 import { MessageType, MessageTypeModel, UserInfo, UserInfoModel } from '../../../models'
 
@@ -47,14 +47,19 @@ struct BottomInput {
     })
   }
 
-  onSubmit() {
+  onSubmit(type?: MessageTypeEnum) {
     const message = new MessageTypeModel({
       sendUser: this.currentUser,
       connectUser: this.talkUser,
       messageContent: this.content,
     } as MessageType)
+    type && (message.messageType = type)
+    this.tempAudioPath && (message.sourceFilePath = this.tempAudioPath)
+    this.duration && (message.sourceDuration = this.duration)
     this.sendMessage(message)
     this.content = ''
+    this.tempAudioPath = ''
+    this.duration = 0
   }
 
   async getScreenInfo() {
@@ -104,7 +109,13 @@ struct BottomInput {
     }
     if (this.voiceInputState === VoiceInputState.VOICING) {
       // 发送语音
-      promptAction.showToast({ message: '发送语音' })
+      if (this.duration < 1) {
+        promptAction.showToast({ message: '说话时间太短', bottom: this.screenHeight / 2 - 30 })
+        FileCommon.deleteAudioFile(this.tempAudioPath)
+        this.tempAudioPath = ''
+        return
+      }
+      this.onSubmit(MessageTypeEnum.AUDIO)
     }
     if (this.voiceInputState === VoiceInputState.TRANSFER) {
       // 语音转文本

@@ -44,7 +44,7 @@ export class MessageTypeModel implements MessageType {
     this.sendUser = model.sendUser
     this.connectUser = model.connectUser
     this.messageContent = model.messageContent
-    this.messageType = model.messageType = MessageTypeEnum.TEXT
+    this.messageType = model.messageType || MessageTypeEnum.TEXT
     this.sourceFilePath = model.sourceFilePath || ''
     this.sourceDuration = model.sourceDuration || 0
     this.sendTime = testTime || model.sendTime || Date.now()
