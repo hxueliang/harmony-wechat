@@ -1,6 +1,7 @@
 import { VoiceInput } from '.'
 import { VoiceInputState } from '../../../constants'
 import { display } from '@kit.ArkUI'
+import { abilityAccessCtrl, bundleManager } from '@kit.AbilityKit'
 
 @Preview
 @Component
@@ -47,6 +48,21 @@ struct BottomInput {
     this.screenHeight = px2vp(result[0].height)
   }
 
+  async checkPermission() {
+    // 获取应用信息
+    const buildInfo = bundleManager.getBundleInfoForSelfSync(bundleManager.BundleFlag.GET_BUNDLE_INFO_WITH_APPLICATION)
+    // 程序控制管理器
+    const manager = abilityAccessCtrl.createAtManager()
+    // 获取麦克风权限状态信息
+    const status = manager.checkAccessTokenSync(buildInfo.appInfo?.accessTokenId, "ohos.permission.MICROPHONE")
+    if (status === abilityAccessCtrl.GrantStatus.PERMISSION_GRANTED) {
+      // 有权限
+      return Promise.resolve(true)
+    }
+    // 无权限
+    return Promise.resolve(false)
+  }
+
   aboutToAppear(): void {
     this.getScreenInfo()
   }
@@ -81,8 +97,8 @@ struct BottomInput {
               GestureMode.Parallel,
               // voiceInputState
               LongPressGesture()
-                .onAction(() => {
-                  this.showVoiceInput = true
+                .onAction(async () => {
+                  this.showVoiceInput = await this.checkPermission()
                 })
                 .onActionEnd(() => {
                   this.showVoiceInput = false
