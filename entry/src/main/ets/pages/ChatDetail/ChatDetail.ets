@@ -34,18 +34,13 @@ struct ChatDetail {
     this.scrollBottom()
   }
 
-  sendTextMessage(content: string) {
-    const message = new MessageTypeModel({
-      sendUser: this.currentUser,
-      connectUser: this.talkUser,
-      messageContent: content,
-    } as MessageType)
+  sendMessage(message: MessageTypeModel) {
     this.messageList.push(message)
     WechatStore.addOneMessageByUser(this.talkUser.userId, message)
     this.scrollBottom()
 
     setTimeout(() => {
-      this.requestMessage(content)
+      this.requestMessage(message.messageContent)
     }, 1000)
   }
 
@@ -135,8 +130,8 @@ struct ChatDetail {
       })
 
       BottomInput({
-        sendTextMessage: (content: string) => {
-          this.sendTextMessage(content)
+        sendMessage: (message: MessageTypeModel) => {
+          this.sendMessage(message)
         }
       })
     }

@@ -2,14 +2,19 @@ import { display, promptAction } from '@kit.ArkUI'
 import { abilityAccessCtrl, bundleManager, common } from '@kit.AbilityKit'
 
 import { VoiceInput } from '.'
-import { VoiceInputState } from '../../../constants'
+import { CURRENT_USER_KEY, VoiceInputState } from '../../../constants'
 import { AudioCapturer, FileCommon } from '../../../utils'
+import { MessageType, MessageTypeModel, UserInfo, UserInfoModel } from '../../../models'
 
 @Preview
 @Component
 struct BottomInput {
   @Provide
   voiceInputState: VoiceInputState = VoiceInputState.VOICING
+  @StorageProp(CURRENT_USER_KEY)
+  currentUser: UserInfoModel = new UserInfoModel({} as UserInfo) // 我
+  @Consume
+  talkUser: UserInfoModel // 对方
   @State
   isKeyboardMode: boolean = true
   @State
@@ -23,7 +28,7 @@ struct BottomInput {
   tempAudioPath: string = '' // 语音的临时路径
   duration: number = 0 // 语音时长
   timer: number = -1
-  sendTextMessage: (content: string) => void = () => {
+  sendMessage: (message: MessageTypeModel) => void = () => {
   }
 
   @Builder
@@ -43,7 +48,12 @@ struct BottomInput {
   }
 
   onSubmit() {
-    this.sendTextMessage(this.content)
+    const message = new MessageTypeModel({
+      sendUser: this.currentUser,
+      connectUser: this.talkUser,
+      messageContent: this.content,
+    } as MessageType)
+    this.sendMessage(message)
     this.content = ''
   }
 
