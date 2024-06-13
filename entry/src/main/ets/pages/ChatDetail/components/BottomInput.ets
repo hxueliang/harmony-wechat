@@ -1,7 +1,7 @@
 import { VoiceInput } from '.'
 import { VoiceInputState } from '../../../constants'
 import { display } from '@kit.ArkUI'
-import { abilityAccessCtrl, bundleManager } from '@kit.AbilityKit'
+import { abilityAccessCtrl, bundleManager, common } from '@kit.AbilityKit'
 
 @Preview
 @Component
@@ -60,6 +60,16 @@ struct BottomInput {
       return Promise.resolve(true)
     }
     // 无权限
+    // 唤起系统权限设置面
+    const context = getContext() as common.UIAbilityContext
+    context.startAbility({
+      bundleName: 'com.huawei.hmos.settings', // 包名
+      abilityName: 'com.huawei.hmos.settings.MainAbility', // ability名称
+      uri: 'application_info_entry', // 具体页面
+      parameters: {
+        pushParams: buildInfo.name // 是哪个应用要开启权限
+      }
+    })
     return Promise.resolve(false)
   }
 
