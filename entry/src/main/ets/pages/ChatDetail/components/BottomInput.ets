@@ -21,6 +21,8 @@ struct BottomInput {
   @State
   screenHeight: number = 0
   tempAudioPath: string = '' // 语音的临时路径
+  duration: number = 0 // 语音时长
+  timer: number = -1
   sendTextMessage: (content: string) => void = () => {
   }
 
@@ -79,10 +81,12 @@ struct BottomInput {
   beginCollectVoice() {
     this.tempAudioPath = FileCommon.createAudioFile() // 创建音频文件
     AudioCapturer.start(this.tempAudioPath) // 开始录音了
+    this.startTime()
   }
 
   releaseFinger() {
     AudioCapturer.stop() // 关闭语音输入
+    this.stopTime()
     if (this.voiceInputState === VoiceInputState.CANCEL) {
       // 取消发送
       FileCommon.deleteAudioFile(this.tempAudioPath) // 删除文件
@@ -97,6 +101,16 @@ struct BottomInput {
       promptAction.showToast({ message: '语音转文本' })
     }
     this.voiceInputState = VoiceInputState.VOICING
+  }
+
+  startTime() {
+    this.timer = setInterval(() => {
+      this.duration++
+    }, 1000)
+  }
+
+  stopTime() {
+    clearInterval(this.timer)
   }
 
   aboutToAppear(): void {
