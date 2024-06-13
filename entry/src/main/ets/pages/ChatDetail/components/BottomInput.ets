@@ -1,7 +1,9 @@
+import { display, promptAction } from '@kit.ArkUI'
+import { abilityAccessCtrl, bundleManager, common } from '@kit.AbilityKit'
+
 import { VoiceInput } from '.'
 import { VoiceInputState } from '../../../constants'
-import { display } from '@kit.ArkUI'
-import { abilityAccessCtrl, bundleManager, common } from '@kit.AbilityKit'
+import { AudioCapturer, FileCommon } from '../../../utils'
 
 @Preview
 @Component
@@ -18,6 +20,7 @@ struct BottomInput {
   screenWidth: number = 0
   @State
   screenHeight: number = 0
+  tempAudioPath: string = '' // 语音的临时路径
   sendTextMessage: (content: string) => void = () => {
   }
 
@@ -73,8 +76,36 @@ struct BottomInput {
     return Promise.resolve(false)
   }
 
+  beginCollectVoice() {
+    this.tempAudioPath = FileCommon.createAudioFile() // 创建音频文件
+    AudioCapturer.start(this.tempAudioPath) // 开始录音了
+  }
+
+  releaseFinger() {
+    AudioCapturer.stop() // 关闭语音输入
+    if (this.voiceInputState === VoiceInputState.CANCEL) {
+      // 取消发送
+      FileCommon.deleteAudioFile(this.tempAudioPath) // 删除文件
+      promptAction.showToast({ message: '取消发送' })
+    }
+    if (this.voiceInputState === VoiceInputState.VOICING) {
+      // 发送语音
+      promptAction.showToast({ message: '发送语音' })
+    }
+    if (this.voiceInputState === VoiceInputState.TRANSFER) {
+      // 语音转文本
+      promptAction.showToast({ message: '语音转文本' })
+    }
+    this.voiceInputState = VoiceInputState.VOICING
+  }
+
   aboutToAppear(): void {
     this.getScreenInfo()
+    AudioCapturer.init() // 初始化采集器
+  }
+
+  aboutToDisappear(): void {
+    AudioCapturer.release() // 释放采集器
   }
 
   build() {
@@ -109,10 +140,11 @@ struct BottomInput {
               LongPressGesture()
                 .onAction(async () => {
                   this.showVoiceInput = await this.checkPermission()
+                  this.showVoiceInput && this.beginCollectVoice() // 开始收集声音 Todo: 待真机测试
                 })
                 .onActionEnd(() => {
                   this.showVoiceInput = false
-                  this.voiceInputState = VoiceInputState.VOICING
+                  this.releaseFinger() // Todo: 待真机测试
                 }),
               PanGesture()
                 .onActionUpdate((event) => {

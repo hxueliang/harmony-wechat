@@ -7,3 +7,5 @@ export * from './random'
 export * from './time'
 
 export * from './fileOperate'
+
+export * from './audioCapturer'
