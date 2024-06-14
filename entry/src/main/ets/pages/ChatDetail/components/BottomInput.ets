@@ -26,6 +26,8 @@ struct BottomInput {
   @State
   screenHeight: number = 0
   @State
+  showBottomCard: boolean = false // 显示底部
+  @State
   bottomList: LongGesturePopupItem[] = [
     {
       icon: $r('app.media.ic_public_photo'),
@@ -63,6 +65,7 @@ struct BottomInput {
   tempAudioPath: string = '' // 语音的临时路径
   duration: number = 0 // 语音时长
   timer: number = -1
+  textController: TextInputController = new TextInputController() // 文本的控制器
   sendMessage: (message: MessageTypeModel) => void = () => {
   }
 
@@ -71,6 +74,35 @@ struct BottomInput {
     Column() {
       VoiceInput()
     }
+  }
+
+  @Builder
+  getBottomCard(item: LongGesturePopupItem) {
+    Column() {
+      Column() {
+        Image(item.icon)
+          .width(30)
+          .height(30)
+          .fillColor("#4c4c4c")
+      }
+      .backgroundColor(Color.White)
+      .width(56)
+      .aspectRatio(1)
+      .borderRadius(10)
+      .justifyContent(FlexAlign.Center)
+      .alignItems(HorizontalAlign.Center)
+
+      Text(item.title)
+        .fontSize(12)
+        .fontColor($r('app.color.text_second'))
+        .margin({
+          top: 10
+        })
+    }.layoutWeight(1)
+    .alignItems(HorizontalAlign.Center)
+    .onClick(() => {
+      item.onClick && item.onClick()
+    })
   }
 
   showSendBtn() {
@@ -169,6 +201,16 @@ struct BottomInput {
     clearInterval(this.timer)
   }
 
+  /**
+   * 切换BottomCard显隐
+   * @param isShow
+   */
+  changeBottomCardDisplay(isShow: boolean) {
+    animateTo({ duration: 150 }, () => {
+      this.showBottomCard = isShow
+    })
+  }
+
   aboutToAppear(): void {
     this.getScreenInfo()
     AudioCapturer.init() // 初始化采集器
@@ -186,15 +228,22 @@ struct BottomInput {
           .aspectRatio(1)
           .onClick(() => {
             this.isKeyboardMode = !this.isKeyboardMode
+            if (!this.isKeyboardMode) {
+              // 显示"按住 说话"时，不显示BottomCard
+              this.changeBottomCardDisplay(false)
+            }
           })
         if (this.isKeyboardMode) {
-          TextInput({ text: $$this.content })
+          TextInput({ text: $$this.content, controller: this.textController })
             .layoutWeight(1)
             .borderRadius(2)
             .height(38)
             .backgroundColor($r('app.color.white'))
             .onSubmit(() => {
               this.onSubmit()
+            })
+            .onClick(() => {
+              this.changeBottomCardDisplay(false)
             })
         } else {
           Button('按住 说话')
@@ -254,11 +303,32 @@ struct BottomInput {
           Image($r('app.media.ic_public_add_norm'))
             .width(25)
             .aspectRatio(1)
+            .onClick(() => {
+              // 切换BottomCard显隐
+              this.changeBottomCardDisplay(!this.showBottomCard)
+              if (this.showBottomCard) {
+                this.textController.stopEditing() // 关闭编辑，会自动隐藏键盘
+              }
+              this.isKeyboardMode = true // 要显示文本输入，即：显示"按住 说话"时，不显示BottomCard
+            })
         }
       }
       .height(50)
       .backgroundColor($r('app.color.second_back_color'))
       .padding({ right: 12, left: 12 })
+
+      if (this.showBottomCard) {
+        // 底部结构
+        GridRow({ columns: 4 }) {
+          ForEach(this.bottomList, (item: LongGesturePopupItem) => {
+            GridCol() {
+              this.getBottomCard(item)
+            }.height(100)
+          })
+        }
+        .width('100%')
+        .padding({ top: 15 })
+      }
     }
     .bindContentCover($$this.showVoiceInput, this.getVoiceInputUI, {
       modalTransition: ModalTransition.NONE
