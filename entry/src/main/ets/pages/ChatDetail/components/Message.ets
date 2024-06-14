@@ -3,13 +3,10 @@ import { LongGesturePopupItem, MessageType, MessageTypeModel, UserInfo, UserInfo
 import { WechatStore } from '../../../utils'
 
 @Extend(Text)
-function getMessageTextStyles(color: ResourceStr) {
-  .padding({ left: 12, right: 12, top: 10, bottom: 10 })
+function getMessageTextStyles() {
   .fontSize(14)
   .lineHeight(20)
-  .borderRadius(4)
   .fontColor($r('app.color.text_primary'))
-  .backgroundColor(color)
 }
 
 @Preview
@@ -60,6 +57,13 @@ struct Message {
   delOneMessage: () => void = () => {
   }
 
+  @Styles
+  getMessageBoxStyles() {
+    .padding({ left: 12, right: 12, top: 10, bottom: 10 })
+    .borderRadius(4)
+    .backgroundColor(this.isOwnMessage ? $r('app.color.chat_primary') : $r('app.color.white'))
+  }
+
   @Builder
   getPopupUI() {
     GridRow({ columns: 5 }) {
@@ -102,28 +106,29 @@ struct Message {
 
   @Builder
   getTextMessageUI() {
-    Text(this.currentMessage.messageContent)
-      .getMessageTextStyles(this.isOwnMessage ? $r('app.color.chat_primary') : $r('app.color.white'))
+    Row() {
+      Text(this.currentMessage.messageContent)
+        .getMessageTextStyles()
+    }
+    .getMessageBoxStyles()
   }
 
   @Builder
   getAudioMessageUI() {
-    Text() {
-      Span(this.isOwnMessage ?
-        `${this.currentMessage.sourceDuration}" ` :
-        `"${this.currentMessage.sourceDuration} `
-      )
+    Row({ space: 5 }) {
+      Text(`${this.currentMessage.sourceDuration}"`)
+        .getMessageTextStyles()
 
-      ImageSpan($r('app.media.ic_public_recorder'))
+      Image($r('app.media.ic_public_recorder'))
         .width(18)
         .aspectRatio(1)
         .rotate({
           angle: this.isOwnMessage ? 180 : 0
         })
     }
-    .getMessageTextStyles(this.isOwnMessage ? $r('app.color.chat_primary') : $r('app.color.white'))
+    .getMessageBoxStyles()
     .width(this.getAudioMessageWidth())
-    .textAlign(TextAlign.End)
+    .justifyContent(FlexAlign.End)
     .direction(this.isOwnMessage ? Direction.Ltr : Direction.Rtl)
   }
 
