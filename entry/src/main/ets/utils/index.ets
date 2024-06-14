@@ -1,4 +1,4 @@
-export { WechatStore } from './WechatStore'
+export { WechatStore } from './wechatStore'
 
 export * from './request'
 
