@@ -1,6 +1,16 @@
-import { CURRENT_USER_KEY } from '../../../constants'
+import { CURRENT_USER_KEY, MessageTypeEnum, ShowContent, ShowTypeNameAndDuration } from '../../../constants'
 import { LongGesturePopupItem, MessageType, MessageTypeModel, UserInfo, UserInfoModel } from '../../../models'
 import { WechatStore } from '../../../utils'
+
+@Extend(Text)
+function getMessageTextStyles(color: ResourceStr) {
+  .padding({ left: 12, right: 12, top: 10, bottom: 10 })
+  .fontSize(14)
+  .lineHeight(20)
+  .borderRadius(4)
+  .fontColor($r('app.color.text_primary'))
+  .backgroundColor(color)
+}
 
 @Preview
 @Component
@@ -10,6 +20,8 @@ struct Message {
   @Require
   @Prop
   currentMessage: MessageType = new MessageTypeModel({} as MessageType)
+  @State
+  messageType: MessageTypeEnum = this.currentMessage.messageType
   @State
   isOwnMessage: boolean = this.currentUser.userId === this.currentMessage?.sendUser?.userId
   @State
@@ -80,6 +92,41 @@ struct Message {
     .width(300)
   }
 
+  getAudioMessageWidth() {
+    const minWidth = 30
+    const maxWidth = 100
+    const calcWidth = minWidth + (this.currentMessage.sourceDuration as number) / 60 * (maxWidth - minWidth)
+    if (calcWidth < maxWidth) return calcWidth + '%'
+    return maxWidth + '%'
+  }
+
+  @Builder
+  getTextMessageUI() {
+    Text(this.currentMessage.messageContent)
+      .getMessageTextStyles(this.isOwnMessage ? $r('app.color.chat_primary') : $r('app.color.white'))
+  }
+
+  @Builder
+  getAudioMessageUI() {
+    Text() {
+      Span(this.isOwnMessage ?
+        `${this.currentMessage.sourceDuration}" ` :
+        `"${this.currentMessage.sourceDuration} `
+      )
+
+      ImageSpan($r('app.media.ic_public_recorder'))
+        .width(18)
+        .aspectRatio(1)
+        .rotate({
+          angle: this.isOwnMessage ? 180 : 0
+        })
+    }
+    .getMessageTextStyles(this.isOwnMessage ? $r('app.color.chat_primary') : $r('app.color.white'))
+    .width(this.getAudioMessageWidth())
+    .textAlign(TextAlign.End)
+    .direction(this.isOwnMessage ? Direction.Ltr : Direction.Rtl)
+  }
+
   build() {
     Row({ space: 10 }) {
       Image(this.currentMessage.sendUser?.avatar)
@@ -88,27 +135,28 @@ struct Message {
         .borderRadius(4)
 
       Row() {
-        Text(this.currentMessage.messageContent)
-          .padding({ left: 12, right: 12, top: 8, bottom: 8 })
-          .fontSize(14)
-          .lineHeight(20)
-          .borderRadius(4)
-          .fontColor($r('app.color.text_primary'))
-          .backgroundColor(this.isOwnMessage ? $r('app.color.second_primary') : $r('app.color.white'))
-          .gesture(
-            LongPressGesture()
-              .onAction(() => {
-                this.showLongGesturePopup = true
-              })
-          )
-          .bindPopup(this.showLongGesturePopup, {
-            builder: this.getPopupUI,
-            popupColor: $r('app.color.popup_back'),
-            backgroundBlurStyle: BlurStyle.NONE,
-            onStateChange: ((event) => {
-              this.showLongGesturePopup = event.isVisible
+        Row() {
+          if (ShowContent.includes(this.messageType)) {
+            this.getTextMessageUI()
+          }
+          else if (ShowTypeNameAndDuration.includes(this.messageType)) {
+            this.getAudioMessageUI()
+          }
+        }
+        .gesture(
+          LongPressGesture()
+            .onAction(() => {
+              this.showLongGesturePopup = true
             })
+        )
+        .bindPopup(this.showLongGesturePopup, {
+          builder: this.getPopupUI,
+          popupColor: $r('app.color.popup_back'),
+          backgroundBlurStyle: BlurStyle.NONE,
+          onStateChange: ((event) => {
+            this.showLongGesturePopup = event.isVisible
           })
+        })
       }
       .justifyContent(this.isOwnMessage ? FlexAlign.End : FlexAlign.Start)
       .layoutWeight(1)

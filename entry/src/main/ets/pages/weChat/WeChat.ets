@@ -3,7 +3,14 @@ import { emitter } from '@kit.BasicServicesKit'
 
 import { MessageTypeModel } from '../../models'
 import { getTimeObj, WechatStore } from '../../utils'
-import { UPDATE_MESSAGE_RECORD_EVENT } from '../../constants'
+import {
+  MessageTypeNameList,
+  ShowContent,
+  ShowTypeName,
+  ShowTypeNameAndContent,
+  ShowTypeNameAndDuration,
+  UPDATE_MESSAGE_RECORD_EVENT
+} from '../../constants'
 
 @Component
 export struct WeChat {
@@ -102,7 +109,13 @@ export struct WeChat {
               Column() {
                 Text(item.connectUser.userName)
                   .fontColor($r('app.color.text_primary'))
-                Text(item.messageContent)
+                Text(
+                  ShowContent.includes(item.messageType) ? item.messageContent :
+                    ShowTypeName.includes(item.messageType) ? `[${MessageTypeNameList[item.messageType]}]` :
+                      ShowTypeNameAndDuration.includes(item.messageType) ? `[${MessageTypeNameList[item.messageType]}] ${item.sourceDuration}"` :
+                        ShowTypeNameAndContent.includes(item.messageType) ? `[${MessageTypeNameList[item.messageType]}]` + ` ${item.messageContent}` :
+                          ''
+                )
                   .fontSize(14)
                   .fontColor($r('app.color.text_second'))
                   .maxLines(1)
