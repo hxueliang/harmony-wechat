@@ -4,7 +4,7 @@ import { abilityAccessCtrl, bundleManager, common } from '@kit.AbilityKit'
 import { VoiceInput } from '.'
 import { CURRENT_USER_KEY, MessageTypeEnum, VoiceInputState } from '../../../constants'
 import { AudioCapturer, FileCommon } from '../../../utils'
-import { MessageType, MessageTypeModel, UserInfo, UserInfoModel } from '../../../models'
+import { LongGesturePopupItem, MessageType, MessageTypeModel, UserInfo, UserInfoModel } from '../../../models'
 
 @Preview
 @Component
@@ -25,6 +25,41 @@ struct BottomInput {
   screenWidth: number = 0
   @State
   screenHeight: number = 0
+  @State
+  bottomList: LongGesturePopupItem[] = [
+    {
+      icon: $r('app.media.ic_public_photo'),
+      title: '照片',
+    },
+    {
+      icon: $r('app.media.ic_public_carema'),
+      title: '拍摄',
+    },
+    {
+      icon: $r('app.media.ic_statusbar_gps'),
+      title: '位置',
+    },
+    {
+      icon: $r('app.media.ic_public_voice'),
+      title: '语音输入',
+    },
+    {
+      icon: $r("app.media.ic_public_collect"),
+      title: '收藏',
+    },
+    {
+      icon: $r("app.media.ic_public_contacts_filled"),
+      title: '个人名片',
+    },
+    {
+      icon: $r("app.media.ic_public_folder_filled"),
+      title: '文件',
+    },
+    {
+      icon: $r("app.media.ic_public_music_filled"),
+      title: '音乐',
+    }
+  ]
   tempAudioPath: string = '' // 语音的临时路径
   duration: number = 0 // 语音时长
   timer: number = -1
@@ -144,85 +179,87 @@ struct BottomInput {
   }
 
   build() {
-    Row({ space: 12 }) {
-      Image(this.isKeyboardMode ? $r('app.media.ic_public_sound') : $r('app.media.ic_public_keyboard'))
-        .width(25)
-        .aspectRatio(1)
-        .onClick(() => {
-          this.isKeyboardMode = !this.isKeyboardMode
-        })
-      if (this.isKeyboardMode) {
-        TextInput({ text: $$this.content })
-          .layoutWeight(1)
-          .borderRadius(2)
-          .height(38)
-          .backgroundColor($r('app.color.white'))
-          .onSubmit(() => {
-            this.onSubmit()
-          })
-      } else {
-        Button('按住 说话')
-          .layoutWeight(1)
-          .type(ButtonType.Normal)
-          .borderRadius(2)
-          .height(38)
-          .backgroundColor($r('app.color.white'))
-          .fontColor($r('app.color.text_primary'))
-          .gesture(
-            GestureGroup(
-              GestureMode.Parallel,
-              // voiceInputState
-              LongPressGesture()
-                .onAction(async () => {
-                  this.showVoiceInput = await this.checkPermission()
-                  this.showVoiceInput && this.beginCollectVoice() // 开始收集声音 Todo: 待真机测试
-                })
-                .onActionEnd(() => {
-                  this.showVoiceInput = false
-                  this.releaseFinger() // Todo: 待真机测试
-                }),
-              PanGesture()
-                .onActionUpdate((event) => {
-                  const globalX = event.fingerList[0].globalX
-                  const globalY = event.fingerList[0].globalY
-                  if (globalY > this.screenHeight - 140) {
-                    this.voiceInputState = VoiceInputState.VOICING
-                    return
-                  }
-                  if (globalX < this.screenWidth / 2) {
-                    this.voiceInputState = VoiceInputState.CANCEL
-                  } else {
-                    this.voiceInputState = VoiceInputState.TRANSFER
-                  }
-                })
-            )
-          )
-      }
-      if (this.content) {
-        Button('发送')
-          .type(ButtonType.Normal)
-          .height(38)
-          .borderRadius(4)
-          .backgroundColor($r('app.color.second_primary'))
-          .fontColor($r('app.color.white'))
-          .transition(
-            TransitionEffect.OPACITY.animation({ duration: 200 })
-              .combine(TransitionEffect.translate({
-                x: 20,
-              }))
-          )
-          .onClick(() => {
-            this.onSubmit()
-          })
-      } else {
-        Image($r('app.media.ic_public_add_norm'))
+    Column() {
+      Row({ space: 12 }) {
+        Image(this.isKeyboardMode ? $r('app.media.ic_public_sound') : $r('app.media.ic_public_keyboard'))
           .width(25)
           .aspectRatio(1)
+          .onClick(() => {
+            this.isKeyboardMode = !this.isKeyboardMode
+          })
+        if (this.isKeyboardMode) {
+          TextInput({ text: $$this.content })
+            .layoutWeight(1)
+            .borderRadius(2)
+            .height(38)
+            .backgroundColor($r('app.color.white'))
+            .onSubmit(() => {
+              this.onSubmit()
+            })
+        } else {
+          Button('按住 说话')
+            .layoutWeight(1)
+            .type(ButtonType.Normal)
+            .borderRadius(2)
+            .height(38)
+            .backgroundColor($r('app.color.white'))
+            .fontColor($r('app.color.text_primary'))
+            .gesture(
+              GestureGroup(
+                GestureMode.Parallel,
+                // voiceInputState
+                LongPressGesture()
+                  .onAction(async () => {
+                    this.showVoiceInput = await this.checkPermission()
+                    this.showVoiceInput && this.beginCollectVoice() // 开始收集声音 Todo: 待真机测试
+                  })
+                  .onActionEnd(() => {
+                    this.showVoiceInput = false
+                    this.releaseFinger() // Todo: 待真机测试
+                  }),
+                PanGesture()
+                  .onActionUpdate((event) => {
+                    const globalX = event.fingerList[0].globalX
+                    const globalY = event.fingerList[0].globalY
+                    if (globalY > this.screenHeight - 140) {
+                      this.voiceInputState = VoiceInputState.VOICING
+                      return
+                    }
+                    if (globalX < this.screenWidth / 2) {
+                      this.voiceInputState = VoiceInputState.CANCEL
+                    } else {
+                      this.voiceInputState = VoiceInputState.TRANSFER
+                    }
+                  })
+              )
+            )
+        }
+        if (this.content) {
+          Button('发送')
+            .type(ButtonType.Normal)
+            .height(38)
+            .borderRadius(4)
+            .backgroundColor($r('app.color.second_primary'))
+            .fontColor($r('app.color.white'))
+            .transition(
+              TransitionEffect.OPACITY.animation({ duration: 200 })
+                .combine(TransitionEffect.translate({
+                  x: 20,
+                }))
+            )
+            .onClick(() => {
+              this.onSubmit()
+            })
+        } else {
+          Image($r('app.media.ic_public_add_norm'))
+            .width(25)
+            .aspectRatio(1)
+        }
       }
+      .height(50)
+      .backgroundColor($r('app.color.second_back_color'))
+      .padding({ right: 12, left: 12 })
     }
-    .height(50)
-    .backgroundColor($r('app.color.second_back_color'))
-    .padding({ right: 12, left: 12 })
     .bindContentCover($$this.showVoiceInput, this.getVoiceInputUI, {
       modalTransition: ModalTransition.NONE
     })
