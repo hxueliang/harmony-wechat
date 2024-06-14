@@ -3,7 +3,7 @@ import { router, window } from '@kit.ArkUI'
 import { getApiMessage } from '../../apis'
 import { CURRENT_USER_KEY } from '../../constants'
 import { MessageType, MessageTypeModel, UserInfo, UserInfoModel } from '../../models'
-import { AudioRenderer, WechatStore } from '../../utils'
+import { AudioRenderer, AvPlayer, WechatStore } from '../../utils'
 import { BottomInput, Message } from './components'
 
 @Entry
@@ -18,11 +18,13 @@ struct ChatDetail {
   @State
   talkUserInputIng: boolean = false
   scroller: Scroller = new Scroller()
+  player: AvPlayer = new AvPlayer()
 
   aboutToAppear(): void {
     this.setWindowBackgroundColor()
     this.getTalkUser()
     AudioRenderer.init() // 初始化音频渲染
+    this.player.init()
   }
 
   aboutToDisappear(): void {
@@ -46,6 +48,7 @@ struct ChatDetail {
 
   sendMessage(message: MessageTypeModel) {
     this.messageList.push(message)
+    this.player.play('send.wav')
     WechatStore.addOneMessageByUser(this.talkUser.userId, message)
     this.scrollBottom()
 
