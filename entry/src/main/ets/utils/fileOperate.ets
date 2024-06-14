@@ -6,10 +6,10 @@ import { fileIo } from '@kit.CoreFileKit'
  */
 export class FileCommon {
   /**
-   * 创建音频文件
+   * 创建文件
    * @returns 路径
    */
-  static createAudioFile() {
+  static createFile() {
     const path = getContext().filesDir + '/' + util.generateRandomUUID() + '.wav'
     const file = fileIo.openSync(path, fileIo.OpenMode.CREATE) // 使用创建模式，打开文件
     fileIo.closeSync(file)
@@ -17,10 +17,10 @@ export class FileCommon {
   }
 
   /**
-   * 删除音频文件
+   * 删除文件
    * @param path 路径
    */
-  static deleteAudioFile(path: string) {
+  static deleteFile(path: string) {
     path && fileIo.unlink(path)
   }
 }

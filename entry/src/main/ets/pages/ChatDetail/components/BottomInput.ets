@@ -94,7 +94,7 @@ struct BottomInput {
   }
 
   beginCollectVoice() {
-    this.tempAudioPath = FileCommon.createAudioFile() // 创建音频文件
+    this.tempAudioPath = FileCommon.createFile() // 创建音频文件
     AudioCapturer.start(this.tempAudioPath) // 开始录音了
     this.startTime()
   }
@@ -104,14 +104,14 @@ struct BottomInput {
     this.stopTime()
     if (this.voiceInputState === VoiceInputState.CANCEL) {
       // 取消发送
-      FileCommon.deleteAudioFile(this.tempAudioPath) // 删除文件
+      FileCommon.deleteFile(this.tempAudioPath) // 删除文件
       promptAction.showToast({ message: '取消发送' })
     }
     if (this.voiceInputState === VoiceInputState.VOICING) {
       // 发送语音
       if (this.duration < 1) {
         promptAction.showToast({ message: '说话时间太短', bottom: this.screenHeight / 2 - 30 })
-        FileCommon.deleteAudioFile(this.tempAudioPath)
+        FileCommon.deleteFile(this.tempAudioPath)
         this.tempAudioPath = ''
         return
       }
