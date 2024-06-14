@@ -9,3 +9,5 @@ export * from './time'
 export * from './fileOperate'
 
 export * from './audioCapturer'
+
+export * from './audioRenderer'

@@ -1,6 +1,6 @@
 import { CURRENT_USER_KEY, MessageTypeEnum, ShowContent, ShowTypeNameAndDuration } from '../../../constants'
 import { LongGesturePopupItem, MessageType, MessageTypeModel, UserInfo, UserInfoModel } from '../../../models'
-import { WechatStore } from '../../../utils'
+import { AudioRenderer } from '../../../utils'
 
 @Extend(Text)
 function getMessageTextStyles() {
@@ -23,6 +23,8 @@ struct Message {
   isOwnMessage: boolean = this.currentUser.userId === this.currentMessage?.sendUser?.userId
   @State
   showLongGesturePopup: boolean = false
+  @State
+  audioState: AnimationStatus = AnimationStatus.Initial
   @State
   longGesturePopupList: LongGesturePopupItem[] = [
     {
@@ -119,7 +121,23 @@ struct Message {
       Text(`${this.currentMessage.sourceDuration}"`)
         .getMessageTextStyles()
 
-      Image($r('app.media.ic_public_recorder'))
+      ImageAnimator()
+        .images([
+          {
+            src: $r("app.media.ic_public_voice3")
+          },
+          {
+            src: $r("app.media.ic_public_voice1")
+          },
+          {
+            src: $r("app.media.ic_public_voice2")
+          },
+          {
+            src: $r("app.media.ic_public_voice3")
+          }
+        ])
+        .state(this.audioState)
+        .iterations(-1)
         .width(18)
         .aspectRatio(1)
         .rotate({
@@ -130,6 +148,12 @@ struct Message {
     .width(this.getAudioMessageWidth())
     .justifyContent(FlexAlign.End)
     .direction(this.isOwnMessage ? Direction.Ltr : Direction.Rtl)
+    .onClick(() => {
+      AudioRenderer.start(this.currentMessage.sourceFilePath!, () => {
+        this.audioState = AnimationStatus.Stopped
+      }) // 播放
+      this.audioState = AnimationStatus.Running
+    })
   }
 
   build() {

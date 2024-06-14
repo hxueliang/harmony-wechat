@@ -3,7 +3,7 @@ import { router, window } from '@kit.ArkUI'
 import { getApiMessage } from '../../apis'
 import { CURRENT_USER_KEY } from '../../constants'
 import { MessageType, MessageTypeModel, UserInfo, UserInfoModel } from '../../models'
-import { WechatStore } from '../../utils'
+import { AudioRenderer, WechatStore } from '../../utils'
 import { BottomInput, Message } from './components'
 
 @Entry
@@ -22,6 +22,16 @@ struct ChatDetail {
   aboutToAppear(): void {
     this.setWindowBackgroundColor()
     this.getTalkUser()
+    AudioRenderer.init() // 初始化音频渲染
+  }
+
+  aboutToDisappear(): void {
+    this.releaseAudio()
+  }
+
+  async releaseAudio() {
+    await AudioRenderer.stop() // 先暂停 再释放
+    AudioRenderer.release()
   }
 
   getTalkUser() {
