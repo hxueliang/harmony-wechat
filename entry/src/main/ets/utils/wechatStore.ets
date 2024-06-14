@@ -10,6 +10,7 @@ import {
   WECHAT_STORE_KEY
 } from '../constants'
 import { MessageTypeModel, UserInfo, UserInfoModel } from '../models'
+import { FileCommon } from '.'
 
 export class WechatStore {
   static context: Context
@@ -57,6 +58,10 @@ export class WechatStore {
 
   /** 删除全部聊天记录(指定对话用户) */
   static async delAllMessageByUser(talkId: number) {
+    const messageList = await WechatStore.getAllMessageByUser(talkId)
+    messageList.forEach(message => {
+      message.sourceFilePath && FileCommon.deleteFile(message.sourceFilePath)
+    })
     preferences.deletePreferences(getContext(), `${TALK_USER_RECORD_KEY}_${talkId}`)
   }
 
@@ -74,6 +79,15 @@ export class WechatStore {
 
   /** 删除一条聊天记录(指定对话用户) */
   static async delOneMessageByUser(talkId: number, messageId: number | string) {
+    const messageList = await WechatStore.getAllMessageByUser(talkId)
+    let index = messageList.length - 1
+    while (index >= 0) {
+      const message = messageList[index--]
+      if (message.id === messageId && message.sourceFilePath) {
+        FileCommon.deleteFile(message.sourceFilePath)
+        index = -1
+      }
+    }
     const store = await WechatStore.getMessageRecordStore(talkId)
     store.deleteSync(messageId + '')
     await store.flush()
