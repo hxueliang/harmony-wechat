@@ -62,7 +62,7 @@ struct BottomInput {
       title: '音乐',
     }
   ]
-  tempAudioPath: string = '' // 语音的临时路径
+  tempFilePath: string = '' // 文件临时路径
   duration: number = 0 // 语音时长
   timer: number = -1
   textController: TextInputController = new TextInputController() // 文本的控制器
@@ -121,11 +121,11 @@ struct BottomInput {
       messageContent: this.content,
     } as MessageType)
     type && (message.messageType = type)
-    this.tempAudioPath && (message.sourceFilePath = this.tempAudioPath)
+    this.tempFilePath && (message.sourceFilePath = this.tempFilePath)
     this.duration && (message.sourceDuration = this.duration)
     this.sendMessage(message)
     this.content = ''
-    this.tempAudioPath = ''
+    this.tempFilePath = ''
     this.duration = 0
   }
 
@@ -161,8 +161,8 @@ struct BottomInput {
   }
 
   beginCollectVoice() {
-    this.tempAudioPath = FileCommon.createFile() // 创建音频文件
-    AudioCapturer.start(this.tempAudioPath) // 开始录音了
+    this.tempFilePath = FileCommon.createFile() // 创建音频文件
+    AudioCapturer.start(this.tempFilePath) // 开始录音了
     this.startTime()
   }
 
@@ -171,7 +171,7 @@ struct BottomInput {
     this.stopTime()
     if (this.voiceInputState === VoiceInputState.CANCEL) {
       // 取消发送
-      FileCommon.deleteFile(this.tempAudioPath) // 删除文件
+      FileCommon.deleteFile(this.tempFilePath) // 删除文件
       this.duration = 0
       promptAction.showToast({ message: '取消发送' })
     }
@@ -179,8 +179,8 @@ struct BottomInput {
       // 发送语音
       if (this.duration < 1) {
         promptAction.showToast({ message: '说话时间太短', bottom: this.screenHeight / 2 - 30 })
-        FileCommon.deleteFile(this.tempAudioPath)
-        this.tempAudioPath = ''
+        FileCommon.deleteFile(this.tempFilePath)
+        this.tempFilePath = ''
         return
       }
       this.onSubmit(MessageTypeEnum.AUDIO)
