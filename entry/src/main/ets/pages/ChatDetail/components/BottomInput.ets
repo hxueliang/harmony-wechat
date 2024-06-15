@@ -172,6 +172,7 @@ struct BottomInput {
     if (this.voiceInputState === VoiceInputState.CANCEL) {
       // 取消发送
       FileCommon.deleteFile(this.tempAudioPath) // 删除文件
+      this.duration = 0
       promptAction.showToast({ message: '取消发送' })
     }
     if (this.voiceInputState === VoiceInputState.VOICING) {
