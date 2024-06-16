@@ -58,6 +58,8 @@ struct Message {
     }]
   delOneMessage: () => void = () => {
   }
+  imagePreview: () => void = () => {
+  }
 
   @Styles
   getMessageBoxStyles() {
@@ -164,6 +166,9 @@ struct Message {
         .enabled(false) // 关闭图片动效
     }
     .width('60%')
+    .onClick(() => {
+      this.imagePreview()
+    })
   }
 
   build() {

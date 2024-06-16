@@ -4,7 +4,7 @@ import { getApiMessage } from '../../apis'
 import { CURRENT_USER_KEY } from '../../constants'
 import { MessageType, MessageTypeModel, UserInfo, UserInfoModel } from '../../models'
 import { AudioRenderer, AvPlayer, WechatStore } from '../../utils'
-import { BottomInput, Message } from './components'
+import { BottomInput, Message, ImagePreview } from './components'
 
 @Entry
 @Component
@@ -19,6 +19,14 @@ struct ChatDetail {
   talkUserInputIng: boolean = false
   scroller: Scroller = new Scroller()
   player: AvPlayer = new AvPlayer()
+  imagePreviewUrl: string = ''
+  imagePreviewController: CustomDialogController = new CustomDialogController({
+    builder: ImagePreview({
+      url: this.imagePreviewUrl
+    }),
+    autoCancel: false,
+    customStyle: true
+  })
 
   aboutToAppear(): void {
     this.setWindowBackgroundColor()
@@ -128,6 +136,10 @@ struct ChatDetail {
               currentMessage: item,
               delOneMessage: () => {
                 this.delOneMessage(item.id.toString())
+              },
+              imagePreview: () => {
+                this.imagePreviewUrl = item.sourceFilePath
+                this.imagePreviewController.open()
               }
             })
           }
