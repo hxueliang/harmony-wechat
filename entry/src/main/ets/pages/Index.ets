@@ -1,3 +1,5 @@
+// 配置证书文档：https://developer.huawei.com/consumer/cn/doc/app/agc-help-harmonyos-releaseapp-0000001126380068
+
 import { ITabItem } from '../models'
 import { WeChat } from './weChat/WeChat'
 import { Connect } from './connect/Connect'
