@@ -134,10 +134,10 @@ struct BottomInput {
       if (result.mediaType === cameraPicker.PickerMediaType.PHOTO) {
         // Todo: 相机拍照，模似数据用，后续模似器有相机功能后，要删除相应逻辑(3/3)
         if (this.mockFilePath) {
-          await this.sendImageMessage(this.mockFilePath)
+          await this.sendMediaMessage(this.mockFilePath)
           return
         }
-        await this.sendImageMessage(result.resultUri)
+        await this.sendMediaMessage(result.resultUri)
       }
     } catch (error) {
       promptAction.showToast({ message: '相机打开异常' })
@@ -148,23 +148,28 @@ struct BottomInput {
     const photoPicker = new picker.PhotoViewPicker()
     const result = await photoPicker.select({
       maxSelectNumber: 9,
-      MIMEType: picker.PhotoViewMIMETypes.IMAGE_TYPE
+      MIMEType: picker.PhotoViewMIMETypes.IMAGE_VIDEO_TYPE
     })
     const photoUris = result.photoUris
     const length = photoUris.length
     let index = 0
     while (index < length) {
-      await this.sendImageMessage(photoUris[index])
+      await this.sendMediaMessage(photoUris[index])
       this.mockFilePath = photoUris[index] // Todo: 相机拍照，模似数据用，后续模似器有相机功能后，要删除相应逻辑(2/3)
       index++
     }
   }
 
-  async sendImageMessage(url: string) {
+  async sendMediaMessage(url: string) {
+    // 解释媒体类型
+    const extendName = url.split('.')[1]
+    const messageType = extendName === 'mp4' ? MessageTypeEnum.VIDEO :
+      extendName === 'jpg' ? MessageTypeEnum.IMAGE : MessageTypeEnum.IMAGE
+
     const file = await fileIo.open(url, fileIo.OpenMode.READ_ONLY) // 手机相册中的图片
-    this.tempFilePath = getContext().filesDir + '/' + util.generateRandomUUID() + '.jpg'
+    this.tempFilePath = getContext().filesDir + '/' + util.generateRandomUUID() + '.' + extendName
     await fileIo.copyFile(file.fd, this.tempFilePath)
-    this.onSubmit(MessageTypeEnum.IMAGE)
+    this.onSubmit(messageType)
     fileIo.close(file.fd) // 释放资源
     this.changeBottomCardDisplay(false)
   }
