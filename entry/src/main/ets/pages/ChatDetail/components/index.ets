@@ -4,4 +4,4 @@ export { default as Message } from './Message'
 
 export { default as VoiceInput } from './VoiceInput'
 
-export { default as ImagePreview } from './ImagePreview'
+export { default as MediaPreview } from './MediaPreview'

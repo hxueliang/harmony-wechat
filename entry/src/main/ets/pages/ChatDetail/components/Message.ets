@@ -58,7 +58,7 @@ struct Message {
     }]
   delOneMessage: () => void = () => {
   }
-  imagePreview: () => void = () => {
+  mediaPreview: () => void = () => {
   }
 
   @Styles
@@ -167,7 +167,7 @@ struct Message {
     }
     .width('60%')
     .onClick(() => {
-      this.imagePreview()
+      this.mediaPreview()
     })
   }
 

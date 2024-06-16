@@ -4,7 +4,7 @@ import { getApiMessage } from '../../apis'
 import { CURRENT_USER_KEY } from '../../constants'
 import { MessageType, MessageTypeModel, UserInfo, UserInfoModel } from '../../models'
 import { AudioRenderer, AvPlayer, WechatStore } from '../../utils'
-import { BottomInput, Message, ImagePreview } from './components'
+import { BottomInput, Message, MediaPreview } from './components'
 
 @Entry
 @Component
@@ -19,10 +19,10 @@ struct ChatDetail {
   talkUserInputIng: boolean = false
   scroller: Scroller = new Scroller()
   player: AvPlayer = new AvPlayer()
-  imagePreviewUrl: string = ''
-  imagePreviewController: CustomDialogController = new CustomDialogController({
-    builder: ImagePreview({
-      url: this.imagePreviewUrl
+  mediaPreviewUrl: string = ''
+  mediaPreviewController: CustomDialogController = new CustomDialogController({
+    builder: MediaPreview({
+      url: this.mediaPreviewUrl
     }),
     autoCancel: false,
     customStyle: true
@@ -137,9 +137,9 @@ struct ChatDetail {
               delOneMessage: () => {
                 this.delOneMessage(item.id.toString())
               },
-              imagePreview: () => {
-                this.imagePreviewUrl = item.sourceFilePath
-                this.imagePreviewController.open()
+              mediaPreview: () => {
+                this.mediaPreviewUrl = item.sourceFilePath
+                this.mediaPreviewController.open()
               }
             })
           }

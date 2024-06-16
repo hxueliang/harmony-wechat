@@ -1,14 +1,19 @@
+import { MessageTypeEnum } from '../../../constants'
+
 @CustomDialog
 @Component
-struct ImagePreview {
+struct MediaPreview {
   controller: CustomDialogController
   url: string = ''
+  messageType: MessageTypeEnum = MessageTypeEnum.IMAGE
 
   build() {
     // Todo: 底部没全屏
     Column() {
-      Image('file://' + this.url)
-        .width('100%')
+      if (this.messageType === MessageTypeEnum.IMAGE) {
+        Image('file://' + this.url)
+          .width('100%')
+      }
     }
     .width('100%')
     .height('100%')
@@ -20,4 +25,4 @@ struct ImagePreview {
   }
 }
 
-export default ImagePreview
+export default MediaPreview
