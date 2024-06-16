@@ -33,9 +33,9 @@ struct BottomInput {
   bottomList: LongGesturePopupItem[] = [
     {
       icon: $r('app.media.ic_public_photo'),
-      title: '照片',
+      title: '相册',
       onClick: () => {
-        this.sendImageMessage()
+        this.openPhotoAlbum()
       }
     },
     {
@@ -119,7 +119,7 @@ struct BottomInput {
     })
   }
 
-  async sendImageMessage() {
+  async openPhotoAlbum() {
     const photoPicker = new picker.PhotoViewPicker()
     const result = await photoPicker.select({
       maxSelectNumber: 9,
@@ -129,13 +129,18 @@ struct BottomInput {
     const length = photoUris.length
     let index = 0
     while (index < length) {
-      const file = await fileIo.open(photoUris[index], fileIo.OpenMode.READ_ONLY) // 手机相册中的图片
-      this.tempFilePath = getContext().filesDir + '/' + util.generateRandomUUID() + '.jpg'
-      await fileIo.copyFile(file.fd, this.tempFilePath)
-      this.onSubmit(MessageTypeEnum.IMAGE)
-      fileIo.close(file.fd) // 释放资源
+      await this.sendImageMessage(photoUris[index])
       index++
     }
+  }
+
+  async sendImageMessage(url: string) {
+    const file = await fileIo.open(url, fileIo.OpenMode.READ_ONLY) // 手机相册中的图片
+    this.tempFilePath = getContext().filesDir + '/' + util.generateRandomUUID() + '.jpg'
+    await fileIo.copyFile(file.fd, this.tempFilePath)
+    this.onSubmit(MessageTypeEnum.IMAGE)
+    fileIo.close(file.fd) // 释放资源
+    this.changeBottomCardDisplay(false)
   }
 
   onSubmit(type?: MessageTypeEnum) {
