@@ -161,6 +161,7 @@ struct Message {
     Row() {
       Image('file://' + this.currentMessage.sourceFilePath)
         .borderRadius(4)
+        .enabled(false) // 关闭图片动效
     }
     .width('60%')
   }
