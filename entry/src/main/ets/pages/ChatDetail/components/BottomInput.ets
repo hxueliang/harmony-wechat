@@ -1,5 +1,7 @@
 import { display, promptAction } from '@kit.ArkUI'
 import { abilityAccessCtrl, bundleManager, common } from '@kit.AbilityKit'
+import { fileIo, picker } from '@kit.CoreFileKit'
+import { util } from '@kit.ArkTS'
 
 import { VoiceInput } from '.'
 import { CURRENT_USER_KEY, MessageTypeEnum, VoiceInputState } from '../../../constants'
@@ -32,6 +34,9 @@ struct BottomInput {
     {
       icon: $r('app.media.ic_public_photo'),
       title: '照片',
+      onClick: () => {
+        this.sendImageMessage()
+      }
     },
     {
       icon: $r('app.media.ic_public_carema'),
@@ -112,6 +117,25 @@ struct BottomInput {
     }, () => {
       this.content = this.content
     })
+  }
+
+  async sendImageMessage() {
+    const photoPicker = new picker.PhotoViewPicker()
+    const result = await photoPicker.select({
+      maxSelectNumber: 9,
+      MIMEType: picker.PhotoViewMIMETypes.IMAGE_TYPE
+    })
+    const photoUris = result.photoUris
+    const length = photoUris.length
+    let index = 0
+    while (index < length) {
+      const file = await fileIo.open(photoUris[index], fileIo.OpenMode.READ_ONLY) // 手机相册中的图片
+      this.tempFilePath = getContext().filesDir + '/' + util.generateRandomUUID() + '.jpg'
+      await fileIo.copyFile(file.fd, this.tempFilePath)
+      this.onSubmit(MessageTypeEnum.IMAGE)
+      fileIo.close(file.fd) // 释放资源
+      index++
+    }
   }
 
   onSubmit(type?: MessageTypeEnum) {

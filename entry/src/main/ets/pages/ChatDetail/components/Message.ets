@@ -156,6 +156,15 @@ struct Message {
     })
   }
 
+  @Builder
+  getImageMessageUI() {
+    Row() {
+      Image('file://' + this.currentMessage.sourceFilePath)
+        .borderRadius(4)
+    }
+    .width('60%')
+  }
+
   build() {
     Row({ space: 10 }) {
       Image(this.currentMessage.sendUser?.avatar)
@@ -170,6 +179,9 @@ struct Message {
           }
           else if (ShowTypeNameAndDuration.includes(this.messageType)) {
             this.getAudioMessageUI()
+          }
+          else if (this.messageType === MessageTypeEnum.IMAGE) {
+            this.getImageMessageUI()
           }
         }
         .gesture(
@@ -192,6 +204,7 @@ struct Message {
 
       Text().width(40)
     }
+    .alignItems(VerticalAlign.Top)
     .padding({ left: 20, right: 20 })
     .direction(this.isOwnMessage ? Direction.Rtl : Direction.Ltr)
   }
