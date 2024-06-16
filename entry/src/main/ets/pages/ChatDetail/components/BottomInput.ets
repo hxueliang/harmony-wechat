@@ -2,6 +2,7 @@ import { display, promptAction } from '@kit.ArkUI'
 import { abilityAccessCtrl, bundleManager, common } from '@kit.AbilityKit'
 import { fileIo, picker } from '@kit.CoreFileKit'
 import { util } from '@kit.ArkTS'
+import { camera, cameraPicker } from '@kit.CameraKit'
 
 import { VoiceInput } from '.'
 import { CURRENT_USER_KEY, MessageTypeEnum, VoiceInputState } from '../../../constants'
@@ -41,6 +42,9 @@ struct BottomInput {
     {
       icon: $r('app.media.ic_public_carema'),
       title: '拍摄',
+      onClick: () => {
+        this.openCamera()
+      }
     },
     {
       icon: $r('app.media.ic_statusbar_gps'),
@@ -71,6 +75,7 @@ struct BottomInput {
   duration: number = 0 // 语音时长
   timer: number = -1
   textController: TextInputController = new TextInputController() // 文本的控制器
+  mockFilePath: string = '' // Todo: 相机拍照，模似数据用，后续模似器有相机功能后，要删除相应逻辑(1/3)
   sendMessage: (message: MessageTypeModel) => void = () => {
   }
 
@@ -119,6 +124,26 @@ struct BottomInput {
     })
   }
 
+  async openCamera() {
+    try {
+      const result = await cameraPicker.pick(
+        getContext(),
+        [cameraPicker.PickerMediaType.PHOTO, cameraPicker.PickerMediaType.VIDEO],
+        { cameraPosition: camera.CameraPosition.CAMERA_POSITION_BACK }
+      )
+      if (result.mediaType === cameraPicker.PickerMediaType.PHOTO) {
+        // Todo: 相机拍照，模似数据用，后续模似器有相机功能后，要删除相应逻辑(3/3)
+        if (this.mockFilePath) {
+          await this.sendImageMessage(this.mockFilePath)
+          return
+        }
+        await this.sendImageMessage(result.resultUri)
+      }
+    } catch (error) {
+      promptAction.showToast({ message: '相机打开异常' })
+    }
+  }
+
   async openPhotoAlbum() {
     const photoPicker = new picker.PhotoViewPicker()
     const result = await photoPicker.select({
@@ -130,6 +155,7 @@ struct BottomInput {
     let index = 0
     while (index < length) {
       await this.sendImageMessage(photoUris[index])
+      this.mockFilePath = photoUris[index] // Todo: 相机拍照，模似数据用，后续模似器有相机功能后，要删除相应逻辑(2/3)
       index++
     }
   }
