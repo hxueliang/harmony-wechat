@@ -131,7 +131,11 @@ struct BottomInput {
         [cameraPicker.PickerMediaType.PHOTO, cameraPicker.PickerMediaType.VIDEO],
         { cameraPosition: camera.CameraPosition.CAMERA_POSITION_BACK }
       )
-      if (result.mediaType === cameraPicker.PickerMediaType.PHOTO) {
+      const arr = [
+        cameraPicker.PickerMediaType.PHOTO,
+        cameraPicker.PickerMediaType.VIDEO,
+      ]
+      if (arr.includes(result.mediaType)) {
         // Todo: 相机拍照，模似数据用，后续模似器有相机功能后，要删除相应逻辑(3/3)
         if (this.mockFilePath) {
           await this.sendMediaMessage(this.mockFilePath)

@@ -1,7 +1,7 @@
 import { router, window } from '@kit.ArkUI'
 
 import { getApiMessage } from '../../apis'
-import { CURRENT_USER_KEY } from '../../constants'
+import { CURRENT_USER_KEY, MessageTypeEnum } from '../../constants'
 import { MessageType, MessageTypeModel, UserInfo, UserInfoModel } from '../../models'
 import { AudioRenderer, AvPlayer, WechatStore } from '../../utils'
 import { BottomInput, Message, MediaPreview } from './components'
@@ -20,9 +20,11 @@ struct ChatDetail {
   scroller: Scroller = new Scroller()
   player: AvPlayer = new AvPlayer()
   mediaPreviewUrl: string = ''
+  messageType: MessageTypeEnum = MessageTypeEnum.IMAGE
   mediaPreviewController: CustomDialogController = new CustomDialogController({
     builder: MediaPreview({
-      url: this.mediaPreviewUrl
+      url: this.mediaPreviewUrl,
+      messageType: this.messageType,
     }),
     autoCancel: false,
     customStyle: true
@@ -139,6 +141,7 @@ struct ChatDetail {
               },
               mediaPreview: () => {
                 this.mediaPreviewUrl = item.sourceFilePath
+                this.messageType = item.messageType
                 this.mediaPreviewController.open()
               }
             })

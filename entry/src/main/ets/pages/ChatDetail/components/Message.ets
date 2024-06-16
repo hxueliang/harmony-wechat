@@ -56,6 +56,7 @@ struct Message {
       title: '提醒',
       icon: $r("app.media.ic_public_warin")
     }]
+  videoController: VideoController = new VideoController()
   delOneMessage: () => void = () => {
   }
   mediaPreview: () => void = () => {
@@ -171,6 +172,35 @@ struct Message {
     })
   }
 
+  @Builder
+  getVideoMessageUI() {
+    Column() {
+      Stack() {
+        Video({
+          src: ('file://' + this.currentMessage.sourceFilePath),
+          controller: this.videoController
+        })
+          .autoPlay(false)
+          .width('100%')
+          .aspectRatio(0.8)
+          .controls(false)
+          .borderRadius(4)
+          .onPrepared(() => {
+            this.videoController.setCurrentTime(0.1)
+          })
+        Image($r("app.media.ic_public_play"))
+          .width(60)
+          .aspectRatio(1)
+          .enabled(false)
+          .fillColor($r('app.color.white'))
+      }
+    }
+    .width('60%')
+    .onClick(() => {
+      this.mediaPreview()
+    })
+  }
+
   build() {
     Row({ space: 10 }) {
       Image(this.currentMessage.sendUser?.avatar)
@@ -188,6 +218,9 @@ struct Message {
           }
           else if (this.messageType === MessageTypeEnum.IMAGE) {
             this.getImageMessageUI()
+          }
+          else if (this.messageType === MessageTypeEnum.VIDEO) {
+            this.getVideoMessageUI()
           }
         }
         .gesture(
