@@ -1,7 +1,7 @@
 import { router } from '@kit.ArkUI'
 import { emitter } from '@kit.BasicServicesKit'
 
-import { MessageTypeModel } from '../../models'
+import { MessageTypeModel, PopupItem } from '../../models'
 import { getTimeObj, WechatStore } from '../../utils'
 import {
   MessageTypeNameList,
@@ -16,6 +16,26 @@ import {
 export struct WeChat {
   @State
   list: MessageTypeModel[] = []
+  @State
+  showDropDown: boolean = false
+  popList: PopupItem[] = [
+    {
+      title: '发起群聊',
+      icon: $r('app.media.ic_public_message')
+    },
+    {
+      title: '添加朋友',
+      icon: $r('app.media.ic_public_add_friend')
+    },
+    {
+      title: '扫一扫',
+      icon: $r('app.media.ic_public_scan')
+    },
+    {
+      title: '收付款',
+      icon: $r('app.media.ic_public_receive')
+    }
+  ]
 
   aboutToAppear(): void {
     this.getAllMessageRecord()
@@ -79,6 +99,30 @@ export struct WeChat {
     })
   }
 
+  @Builder
+  getPopUI() {
+    Column() {
+      ForEach(this.popList, (item: PopupItem) => {
+        Row({ space: 2 }) {
+          Image(item.icon)
+            .width(20)
+            .aspectRatio(1)
+            .fillColor($r('app.color.back_color'))
+          Text(item.title)
+            .fontColor($r('app.color.back_color'))
+            .layoutWeight(1)
+            .textAlign(TextAlign.Center)
+        }
+        .padding({ left: 10, right: 10 })
+        .height(40)
+        .onClick(() => {
+          item.onClick && item.onClick()
+        })
+      })
+    }
+    .width(108)
+  }
+
   build() {
     Column() {
       Row() {
@@ -87,6 +131,22 @@ export struct WeChat {
           .fontColor($r('app.color.text_primary'))
           .textAlign(TextAlign.Center)
           .fontSize(16)
+        Image($r('app.media.ic_public_add_norm'))
+          .width(20)
+          .aspectRatio(1)
+          .fillColor($r('app.color.text_primary'))
+          .translate({ x: -30 })
+          .onClick(() => {
+            this.showDropDown = !this.showDropDown
+          })
+          .bindPopup(this.showDropDown, {
+            builder: this.getPopUI,
+            backgroundBlurStyle: BlurStyle.NONE,
+            popupColor: $r('app.color.popup_back'),
+            onStateChange: (event) => {
+              this.showDropDown = event.isVisible
+            }
+          })
       }
       .padding({
         left: 10,
