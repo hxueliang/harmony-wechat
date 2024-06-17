@@ -1,5 +1,6 @@
 import { router } from '@kit.ArkUI'
 import { emitter } from '@kit.BasicServicesKit'
+import { scanBarcode } from '@kit.ScanKit'
 
 import { MessageTypeModel, PopupItem } from '../../models'
 import { getTimeObj, WechatStore } from '../../utils'
@@ -29,7 +30,10 @@ export struct WeChat {
     },
     {
       title: '扫一扫',
-      icon: $r('app.media.ic_public_scan')
+      icon: $r('app.media.ic_public_scan'),
+      onClick: () => {
+        this.scan()
+      }
     },
     {
       title: '收付款',
@@ -40,6 +44,16 @@ export struct WeChat {
   aboutToAppear(): void {
     this.getAllMessageRecord()
     this.transTime(Date.now())
+  }
+
+  async scan() {
+    try {
+      // Todo: 待真机测试
+      const result = await scanBarcode.startScanForResult(getContext())
+      AlertDialog.show({ message: result.originalValue })
+    } catch (err) {
+      AlertDialog.show({ message: err.message })
+    }
   }
 
   async getAllMessageRecord() {
