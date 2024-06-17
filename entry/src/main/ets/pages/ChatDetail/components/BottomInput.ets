@@ -4,7 +4,7 @@ import { fileIo, picker } from '@kit.CoreFileKit'
 import { util } from '@kit.ArkTS'
 import { camera, cameraPicker } from '@kit.CameraKit'
 
-import { VoiceInput } from '.'
+import { Location, VoiceInput } from '.'
 import { CURRENT_USER_KEY, MessageTypeEnum, VoiceInputState } from '../../../constants'
 import { AudioCapturer, FileCommon } from '../../../utils'
 import { LongGesturePopupItem, MessageType, MessageTypeModel, UserInfo, UserInfoModel } from '../../../models'
@@ -31,6 +31,8 @@ struct BottomInput {
   @State
   showBottomCard: boolean = false // 显示底部
   @State
+  showLocation: boolean = false
+  @State
   bottomList: LongGesturePopupItem[] = [
     {
       icon: $r('app.media.ic_public_photo'),
@@ -49,6 +51,9 @@ struct BottomInput {
     {
       icon: $r('app.media.ic_statusbar_gps'),
       title: '位置',
+      onClick: () => {
+        this.showLocation = true
+      }
     },
     {
       icon: $r('app.media.ic_public_voice'),
@@ -83,6 +88,13 @@ struct BottomInput {
   getVoiceInputUI() {
     Column() {
       VoiceInput()
+    }
+  }
+
+  @Builder
+  getLocationUI() {
+    Column() {
+      Location()
     }
   }
 
@@ -381,6 +393,9 @@ struct BottomInput {
       .height(50)
       .backgroundColor($r('app.color.second_back_color'))
       .padding({ right: 12, left: 12 })
+      .bindContentCover($$this.showLocation, this.getLocationUI, {
+        modalTransition: ModalTransition.NONE
+      })
 
       if (this.showBottomCard) {
         // 底部结构

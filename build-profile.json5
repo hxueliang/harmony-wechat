@@ -5,13 +5,13 @@
         "name": "default",
         "type": "HarmonyOS",
         "material": {
-          "storePassword": "00000019587AC096041214E6C6F3E383FAD471F3CE56FEA8A1C851B6F2EB2382A8AD20656AF806971C",
-          "certpath": "/Users/xlh/Documents/learn/harmony/code/证书/wechat的cer证书.cer",
+          "storePassword": "000000195A58222C9BD1040E8A0D04F6AC26749F1A1601ACB1919CEC52FB35724B8F3D89FC20E04880",
+          "certpath": "/Users/xlh/Documents/learn/harmony/code/certificate/wechat.cer",
           "keyAlias": "wx",
-          "keyPassword": "000000191ED4CB803F56E2D057C47829487AD3E010C4FBFDFC625391AE5A5FCD867920AE951DA99F96",
-          "profile": "/Users/xlh/Documents/learn/harmony/code/证书/wechatDebug.p7b",
+          "keyPassword": "000000198B824425C61EE5C28AF2067F660DC4199658C2260BDCD5E6DE4A5DF098606A58C1AC16ED4C",
+          "profile": "/Users/xlh/Documents/learn/harmony/code/certificate/wechatDebug.p7b",
           "signAlg": "SHA256withECDSA",
-          "storeFile": "/Users/xlh/Documents/learn/harmony/code/证书/wechat的p12证书.p12"
+          "storeFile": "/Users/xlh/Documents/learn/harmony/code/certificate/wechat.p12"
         }
       }
     ],
