@@ -1,4 +1,4 @@
-export interface LongGesturePopupItem {
+export interface PopupItem {
   icon: ResourceStr
   title: string
   onClick?: () => void

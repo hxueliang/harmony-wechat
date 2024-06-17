@@ -7,7 +7,7 @@ import { camera, cameraPicker } from '@kit.CameraKit'
 import { Location, VoiceInput } from '.'
 import { CURRENT_USER_KEY, MessageTypeEnum, VoiceInputState } from '../../../constants'
 import { AudioCapturer, FileCommon } from '../../../utils'
-import { LongGesturePopupItem, MessageType, MessageTypeModel, UserInfo, UserInfoModel } from '../../../models'
+import { PopupItem, MessageType, MessageTypeModel, UserInfo, UserInfoModel } from '../../../models'
 
 @Preview
 @Component
@@ -33,7 +33,7 @@ struct BottomInput {
   @State
   showLocation: boolean = false
   @State
-  bottomList: LongGesturePopupItem[] = [
+  bottomList: PopupItem[] = [
     {
       icon: $r('app.media.ic_public_photo'),
       title: '相册',
@@ -99,7 +99,7 @@ struct BottomInput {
   }
 
   @Builder
-  getBottomCard(item: LongGesturePopupItem) {
+  getBottomCard(item: PopupItem) {
     Column() {
       Column() {
         Image(item.icon)
@@ -400,7 +400,7 @@ struct BottomInput {
       if (this.showBottomCard) {
         // 底部结构
         GridRow({ columns: 4 }) {
-          ForEach(this.bottomList, (item: LongGesturePopupItem) => {
+          ForEach(this.bottomList, (item: PopupItem) => {
             GridCol() {
               this.getBottomCard(item)
             }.height(100)

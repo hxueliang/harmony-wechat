@@ -1,5 +1,5 @@
 import { CURRENT_USER_KEY, MessageTypeEnum, ShowContent, ShowTypeNameAndDuration } from '../../../constants'
-import { LongGesturePopupItem, MessageType, MessageTypeModel, UserInfo, UserInfoModel } from '../../../models'
+import { PopupItem, MessageType, MessageTypeModel, UserInfo, UserInfoModel } from '../../../models'
 import { AudioRenderer } from '../../../utils'
 
 @Extend(Text)
@@ -26,7 +26,7 @@ struct Message {
   @State
   audioState: AnimationStatus = AnimationStatus.Initial
   @State
-  longGesturePopupList: LongGesturePopupItem[] = [
+  longGesturePopupList: PopupItem[] = [
     {
       title: '听筒播放',
       icon: $r("app.media.ic_public_ears"),
@@ -72,7 +72,7 @@ struct Message {
   @Builder
   getPopupUI() {
     GridRow({ columns: 5 }) {
-      ForEach(this.longGesturePopupList, (item: LongGesturePopupItem) => {
+      ForEach(this.longGesturePopupList, (item: PopupItem) => {
         GridCol() {
           Column({ space: 10 }) {
             Image(item.icon)
