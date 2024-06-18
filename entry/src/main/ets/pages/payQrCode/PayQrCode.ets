@@ -1,14 +1,18 @@
-import { router } from '@kit.ArkUI'
+import { promptAction, router } from '@kit.ArkUI'
+import { generateBarcode, scanCore } from '@kit.ScanKit'
 
 @Entry
 @Component
 struct PayQrCode {
   @State
   payParams: string = ''
+  @State
+  barCodeImage: PixelMap | null = null
   timer: number = -1
 
   aboutToAppear(): void {
     this.getNewPayParams()
+    this.getBarCodeImage()
     this.timer = setInterval(() => {
       this.getNewPayParams()
     }, 10 * 1000)
@@ -20,6 +24,20 @@ struct PayQrCode {
 
   getNewPayParams() {
     this.payParams = Math.random().toString() // 模似后端提供的密钥
+    this.getBarCodeImage()
+  }
+
+  async getBarCodeImage() {
+    if (!canIUse('scanCore.ScanType')) {
+      return
+    }
+    // Todo: 待新版本模似器测试
+    const option: generateBarcode.CreateOptions = {
+      scanType: scanCore.ScanType.CODE128_CODE,
+      width: 800,
+      height: 200,
+    }
+    this.barCodeImage = await generateBarcode.createBarcode(this.payParams, option)
   }
 
   build() {
@@ -73,6 +91,23 @@ struct PayQrCode {
             Text("优先使用xx银行储蓄卡付款")
               .fontColor($r("app.color.text_second"))
               .fontSize(12)
+
+            // 条型码
+            if (this.barCodeImage) {
+              Image(this.barCodeImage)
+                .width(260)
+                .height(60)
+                .objectFit(ImageFit.Contain)
+            } else {
+              Text('此版本不支付条型码')
+                .width(260)
+                .height(60)
+                .textAlign(TextAlign.Center)
+                .border({
+                  width: 1,
+                })
+            }
+
 
             // 二维码
             QRCode(this.payParams)

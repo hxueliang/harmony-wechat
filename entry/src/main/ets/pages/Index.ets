@@ -3,6 +3,7 @@
 import { ITabItem } from '../models'
 import { WeChat } from './weChat/WeChat'
 import { Connect } from './connect/Connect'
+import { My } from './my/My'
 
 @Entry
 @Component
@@ -51,8 +52,11 @@ struct Index {
             Connect()
           } else if (item.name === 'wechat') {
             WeChat()
+          } else if (item.name === 'my') {
+            My()
           }
         }.tabBar(this.getTabUI(item, index))
+        .backgroundColor($r('app.color.second_back_color'))
       })
     }
     .animationDuration(100)
