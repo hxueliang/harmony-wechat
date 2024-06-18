@@ -4,6 +4,7 @@ import { ITabItem } from '../models'
 import { WeChat } from './weChat/WeChat'
 import { Connect } from './connect/Connect'
 import { My } from './my/My'
+import { Find } from './find/Find'
 
 @Entry
 @Component
@@ -54,6 +55,8 @@ struct Index {
             WeChat()
           } else if (item.name === 'my') {
             My()
+          } else if (item.name === 'discover') {
+            Find()
           }
         }.tabBar(this.getTabUI(item, index))
         .backgroundColor($r('app.color.second_back_color'))

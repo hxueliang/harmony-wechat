@@ -19,7 +19,7 @@ export function getListUI(list: MyListItem[]) {
 export function getListItem(item: PopupItem) {
   Row({ space: 20 }) {
     Image(item.icon)
-      .width(30)
+      .width(24)
       .aspectRatio(1)
     Text(item.title)
       .layoutWeight(1)
@@ -28,8 +28,12 @@ export function getListItem(item: PopupItem) {
       .aspectRatio(1)
       .rotate({ angle: 180 })
   }
-  .padding({ left: 20, right: 10, top: 12, bottom: 12 })
+  .padding({ left: 20, right: 10, top: 20, bottom: 20 })
   .backgroundColor($r('app.color.white'))
+  .border({
+    width: { bottom: 0.75 },
+    color: $r('app.color.border_color')
+  })
   .onClick(() => {
     item.onClick && item.onClick()
   })
