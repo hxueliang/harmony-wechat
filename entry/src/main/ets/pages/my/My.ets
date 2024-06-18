@@ -1,7 +1,7 @@
+import { getListUI } from '../../builder'
 import { CURRENT_USER_KEY } from '../../constants'
-import { PopupItem, UserInfo, UserInfoModel } from '../../models'
-
-type MyListItem = PopupItem | null
+import { MyListItem, UserInfo, UserInfoModel } from '../../models'
+import { promptAction } from '@kit.ArkUI'
 
 @Preview
 @Component
@@ -21,6 +21,9 @@ export struct My {
     {
       title: '朋友圈',
       icon: $r('app.media.ic_public_friends'),
+      onClick: () => {
+        this.goCardPage()
+      }
     },
     {
       title: '卡包',
@@ -64,48 +67,14 @@ export struct My {
     .backgroundColor($r('app.color.white'))
   }
 
-  @Builder
-  getListItem(item: PopupItem) {
-    Row({ space: 20 }) {
-      Image(item.icon)
-        .width(30)
-        .aspectRatio(1)
-      Text(item.title)
-        .layoutWeight(1)
-      Image($r('app.media.ic_public_arrow_left'))
-        .width(20)
-        .aspectRatio(1)
-        .rotate({ angle: 180 })
-    }
-    .padding({ left: 20, right: 10, top: 12, bottom: 12 })
-    .backgroundColor($r('app.color.white'))
-  }
-
-  @Builder
-  getEmptyListItem() {
-    Row()
-      .height(10)
-      .width('100%')
-  }
-
-  @Builder
-  getListUI() {
-    Column() {
-      ForEach(this.myList, (item: MyListItem) => {
-        if (item) {
-          this.getListItem(item)
-        } else {
-          this.getEmptyListItem()
-        }
-      })
-    }
-    .layoutWeight(1)
+  goCardPage() {
+    promptAction.showToast({ message: '朋友圈' })
   }
 
   build() {
     Column({ space: 10 }) {
       this.getUserInfoUI()
-      this.getListUI()
+      getListUI(this.myList)
     }
   }
 }
