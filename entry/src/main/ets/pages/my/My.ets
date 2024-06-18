@@ -1,21 +1,55 @@
-import { PopupItem } from '../../models'
+import { CURRENT_USER_KEY } from '../../constants'
+import { PopupItem, UserInfo, UserInfoModel } from '../../models'
+
+type MyListItem = PopupItem | null
 
 @Preview
 @Component
 export struct My {
+  @StorageProp(CURRENT_USER_KEY)
+  currentUser: UserInfoModel = new UserInfoModel({} as UserInfo)
+  myList: MyListItem[] = [
+    {
+      title: '服务',
+      icon: $r('app.media.ic_public_serve')
+    },
+    null,
+    {
+      title: '收藏',
+      icon: $r('app.media.ic_public_collect_second')
+    },
+    {
+      title: '朋友圈',
+      icon: $r('app.media.ic_public_friends'),
+    },
+    {
+      title: '卡包',
+      icon: $r('app.media.ic_public_card'),
+    },
+    {
+      title: '表情',
+      icon: $r('app.media.ic_public_face'),
+    },
+    null,
+    {
+      title: '设置',
+      icon: $r('app.media.ic_public_setting'),
+    },
+  ]
+
   @Builder
   getUserInfoUI() {
     Row({ space: 20 }) {
-      Image($r('app.media.ic_public_switch_camera'))
+      Image(this.currentUser.avatar)
         .width(80)
         .aspectRatio(1)
         .borderRadius(4)
       Column({ space: 20 }) {
-        Text('九浪')
-          .fontSize(24)
+        Text(this.currentUser.userName)
+          .fontSize(26)
           .fontColor($r('app.color.text_primary'))
-        Text('九浪')
-          .fontSize(16)
+        Text(`v信号：${this.currentUser.userId}`)
+          .fontSize(18)
           .fontColor($r('app.color.text_second'))
       }
       .layoutWeight(1)
@@ -31,12 +65,12 @@ export struct My {
   }
 
   @Builder
-  getListItem() {
+  getListItem(item: PopupItem) {
     Row({ space: 20 }) {
-      Image($r('app.media.ic_public_switch_camera'))
+      Image(item.icon)
         .width(30)
         .aspectRatio(1)
-      Text('服务')
+      Text(item.title)
         .layoutWeight(1)
       Image($r('app.media.ic_public_arrow_left'))
         .width(20)
@@ -57,9 +91,9 @@ export struct My {
   @Builder
   getListUI() {
     Column() {
-      ForEach([1, '', 2, 3, '', 4], (item: string) => {
+      ForEach(this.myList, (item: MyListItem) => {
         if (item) {
-          this.getListItem()
+          this.getListItem(item)
         } else {
           this.getEmptyListItem()
         }
