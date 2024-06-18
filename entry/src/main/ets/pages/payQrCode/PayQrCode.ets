@@ -3,6 +3,25 @@ import { router } from '@kit.ArkUI'
 @Entry
 @Component
 struct PayQrCode {
+  @State
+  payParams: string = ''
+  timer: number = -1
+
+  aboutToAppear(): void {
+    this.getNewPayParams()
+    this.timer = setInterval(() => {
+      this.getNewPayParams()
+    }, 10 * 1000)
+  }
+
+  aboutToDisappear(): void {
+    clearInterval(this.timer)
+  }
+
+  getNewPayParams() {
+    this.payParams = Math.random().toString() // 模似后端提供的密钥
+  }
+
   build() {
     Column() {
       Row() {
@@ -54,6 +73,11 @@ struct PayQrCode {
             Text("优先使用xx银行储蓄卡付款")
               .fontColor($r("app.color.text_second"))
               .fontSize(12)
+
+            // 二维码
+            QRCode(this.payParams)
+              .width(150)
+              .aspectRatio(1)
           }
           .margin({
             top: 10,
