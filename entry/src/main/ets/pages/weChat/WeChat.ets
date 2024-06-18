@@ -176,6 +176,7 @@ export struct WeChat {
         width: { bottom: 1 },
         color: $r('app.color.border_color')
       })
+      .backgroundColor($r('app.color.white'))
 
       List({ space: 20 }) {
         ForEach(this.list, (item: MessageTypeModel, index: number) => {
@@ -216,6 +217,8 @@ export struct WeChat {
           .padding({
             top: index === 0 ? 10 : 0,
             bottom: index === this.list.length - 1 ? 10 : 0,
+            left: 10,
+            right: 10,
           })
           .onClick(() => {
             router.pushUrl({
@@ -234,11 +237,8 @@ export struct WeChat {
         strokeWidth: 1,
         color: $r('app.color.back_color'),
       })
-      .padding({
-        left: 10,
-        right: 10,
-      })
       .layoutWeight(1)
+      .backgroundColor($r('app.color.white'))
     }
     .height('100%')
   }
