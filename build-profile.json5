@@ -6,12 +6,12 @@
         "type": "HarmonyOS",
         "material": {
           "storePassword": "000000195A58222C9BD1040E8A0D04F6AC26749F1A1601ACB1919CEC52FB35724B8F3D89FC20E04880",
-          "certpath": "/Users/xlh/Documents/learn/harmony/code/certificate/wechat.cer",
+          "certpath": "../certificate/wechat.cer",
           "keyAlias": "wx",
           "keyPassword": "000000198B824425C61EE5C28AF2067F660DC4199658C2260BDCD5E6DE4A5DF098606A58C1AC16ED4C",
-          "profile": "/Users/xlh/Documents/learn/harmony/code/certificate/wechatDebug.p7b",
+          "profile": "../certificate/wechatDebug.p7b",
           "signAlg": "SHA256withECDSA",
-          "storeFile": "/Users/xlh/Documents/learn/harmony/code/certificate/wechat.p12"
+          "storeFile": "../certificate/wechat.p12"
         }
       }
     ],
