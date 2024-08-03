@@ -47,6 +47,7 @@ export struct WeChat {
   ]
 
   aboutToAppear(): void {
+    console.log('WeChat')
     this.getAllMessageRecord()
     this.transTime(Date.now())
   }

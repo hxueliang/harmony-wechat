@@ -40,6 +40,10 @@ export struct My {
     },
   ]
 
+  aboutToAppear(): void {
+    console.log('My')
+  }
+
   @Builder
   getUserInfoUI() {
     Row({ space: 20 }) {

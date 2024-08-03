@@ -62,6 +62,10 @@ export struct Find {
 
   ]
 
+  aboutToAppear(): void {
+    console.log('Find')
+  }
+
   build() {
     Scroll() {
       getListUI(this.list)

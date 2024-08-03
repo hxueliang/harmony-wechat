@@ -15,6 +15,7 @@ export struct Connect {
   filerValue: string = ''
 
   aboutToAppear(): void {
+    console.log('Connect')
     this.getConnectList()
   }
 
