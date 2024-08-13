@@ -8,13 +8,11 @@ struct MediaPreview {
   messageType: MessageTypeEnum = MessageTypeEnum.IMAGE
 
   build() {
-    // Todo: 底部没全屏
     Column() {
       if (this.messageType === MessageTypeEnum.IMAGE) {
         Image('file://' + this.url)
           .width('100%')
-      }
-      else if (this.messageType === MessageTypeEnum.VIDEO) {
+      } else if (this.messageType === MessageTypeEnum.VIDEO) {
         Video({
           src: 'file://' + this.url
         })
